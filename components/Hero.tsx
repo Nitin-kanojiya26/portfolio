@@ -30,11 +30,11 @@ export default function Hero() {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="flex flex-col gap-2 mb-10"
         >
-          <h1 className="text-6xl md:text-[120px] font-space font-bold tracking-tighter text-white leading-[0.9]">
+          <h1 className="text-[12vw] md:text-[120px] font-space font-bold tracking-tighter text-white leading-[0.9] whitespace-nowrap">
             NITIN KANOJIYA.
           </h1>
-          <h2 className="text-3xl md:text-6xl font-space font-light tracking-tight text-gray-500 leading-tight">
-            Backend Developer & <br /> Software Engineer.
+          <h2 className="text-2xl sm:text-3xl md:text-6xl font-space font-light tracking-tight text-gray-500 leading-tight">
+            Backend Developer & <br className="hidden md:block" /> Software Engineer.
           </h2>
         </motion.div>
 

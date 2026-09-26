@@ -100,7 +100,7 @@ export default function Contact() {
             <div className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-90 transition-transform duration-500 ease-[0.16,1,0.3,1]">
               <Mail size={24} />
             </div>
-            <span className="text-2xl md:text-3xl font-space text-white group-hover:text-gray-400 transition-colors duration-500 break-all">
+            <span className="text-[5vw] sm:text-2xl md:text-3xl font-space text-white group-hover:text-gray-400 transition-colors duration-500 break-words">
               kanojiyanitin870@gmail.com
             </span>
           </a>

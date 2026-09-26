@@ -109,7 +109,7 @@ export default function Globe({ userLocation }: GlobeProps) {
       <div className="w-full h-full opacity-90 cursor-grab active:cursor-grabbing">
         <canvas
           ref={canvasRef}
-          style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
+          style={{ width: '100%', height: '100%', maxWidth: '600px', aspectRatio: 1 }}
           onPointerDown={(e) => {
             pointerInteracting.current = e.clientX;
             pointerInteractionMovement.current = e.clientX;
