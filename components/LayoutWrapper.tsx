@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import ParticleBackground from './ParticleBackground';
 
-export default function BlackHoleWrapper({ children }: { children: React.ReactNode }) {
+export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* 1. Ultra-minimalist dark gradient background */}

@@ -5,12 +5,12 @@ import Skills from '@/components/Skills';
 import Projects from '@/components/Projects';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import BlackHoleWrapper from '@/components/BlackHoleWrapper';
+import LayoutWrapper from '@/components/LayoutWrapper';
 
 export default function Home() {
   return (
     <main className="relative min-h-screen selection:bg-accent selection:text-white">
-      <BlackHoleWrapper>
+      <LayoutWrapper>
         <Navbar />
         <Hero />
         <About />
@@ -18,7 +18,7 @@ export default function Home() {
         <Projects />
         <Contact />
         <Footer />
-      </BlackHoleWrapper>
+      </LayoutWrapper>
     </main>
   )
 }
