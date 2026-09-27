@@ -29,10 +29,12 @@ export default function Globe({ userLocation }: GlobeProps) {
     let currentPhi = 0;
     let currentTheta = 0;
 
+    let width = canvasRef.current.offsetWidth;
+
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
-      width: 1200,
-      height: 1200,
+      width: width * 2,
+      height: width * 2,
       phi: 0,
       theta: 0,
       dark: 1,

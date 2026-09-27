@@ -32,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans bg-background text-white antialiased`}>
+    <html lang="en" className="dark overflow-x-hidden">
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans bg-background text-white antialiased overflow-x-hidden`}>
         <CustomCursor />
         {children}
       </body>
