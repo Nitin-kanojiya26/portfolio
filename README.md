@@ -42,7 +42,7 @@ Built to impress with cutting-edge web technologies, real-time API integrations,
    Navigate to [http://localhost:3000](http://localhost:3000) to see the magic.
 
 ## 📡 Live Demo
-[Deploy your site to Vercel and put your live link here!]
+https://nitin26-portfolio.vercel.app/
 
 ## 📄 License
 This project is open-source and available under the MIT License.
