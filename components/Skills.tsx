@@ -1,209 +1,193 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { SiClaude, SiDeepseek, SiGooglegemini, SiOllama } from 'react-icons/si';
+import RetroWindow from './RetroWindow';
+import { SiClaude, SiDeepseek, SiGooglegemini, SiOllama, SiRedis, SiPostgresql, SiMongodb, SiMysql, SiDocker, SiSocketdotio } from 'react-icons/si';
 import { RiOpenaiFill } from 'react-icons/ri';
+import { Terminal, Cpu, Database, Wrench, Sparkles, Layers } from 'lucide-react';
+
+interface SkillItem {
+  name: string;
+  src?: string;
+  icon?: any;
+  color?: string;
+  level?: string;
+}
+
+interface SkillCategory {
+  category: string;
+  code: string;
+  icon: any;
+  description: string;
+  logos: SkillItem[];
+}
 
 export default function Skills() {
   const [activeCategory, setActiveCategory] = useState(0);
-  const [activeLogoIndex, setActiveLogoIndex] = useState(0);
 
-  const skills: any[] = [
+  const skills: SkillCategory[] = [
     {
       category: "Languages",
-      description: "The core languages I use to build robust, scalable logic and architecture.",
+      code: "01. LANGUAGES",
+      icon: Terminal,
+      description: "Programming languages used for backend services, APIs, and algorithmic problem solving.",
       logos: [
-        { name: "TypeScript", src: "/stack/Typescript.svg" },
-        { name: "JavaScript", src: "/stack/Javascript.svg" },
-        { name: "Java", src: "/stack/java.svg" },
-        { name: "C#", src: "/stack/csharp.svg" },
-        { name: "Python", src: "/stack/python.svg" },
-        { name: "C/C++", src: "/stack/cpp.svg" },
-        { name: "HTML/CSS", src: "/stack/HTML.png" }
-      ]
+        { name: "Java", src: "/stack/java.svg", level: "CORE • BACKEND" },
+        { name: "C++", src: "/stack/cpp.svg", level: "DSA • SYSTEMS" },
+        { name: "C", src: "/stack/cpp.svg", level: "LOW-LEVEL" },
+        { name: "Python", src: "/stack/python.svg", level: "DJANGO • AI" },
+        { name: "JavaScript", src: "/stack/Javascript.svg", level: "NODE.JS • ES6+" },
+        { name: "HTML / CSS", src: "/stack/HTML.png", level: "SEMANTIC UI" },
+        { name: "PHP", src: "/stack/Typescript.svg", level: "WEB BACKEND" },
+      ],
     },
     {
-      category: "Frameworks & Stacks",
-      description: "Modern frameworks that allow me to craft seamless user experiences and powerful backends.",
+      category: "Frameworks & Runtimes",
+      code: "02. FRAMEWORKS",
+      icon: Layers,
+      description: "Backend frameworks, REST API design, JWT authentication, and WebSockets.",
       logos: [
-        { name: "Next.js", src: "/stack/Next.svg" },
-        { name: "React.js", src: "/stack/React.png" },
-        { name: "Node.js", src: "/stack/NodeJs.svg" },
-        { name: "Express", src: "/stack/Express.png" },
-        { name: "Spring Boot", src: "/stack/spring.svg" },
-        { name: ".NET", src: "/stack/dotnet.svg" },
-        { name: "Django", src: "/stack/django.svg" }
-      ]
+        { name: "Spring Boot", src: "/stack/spring.svg", level: "PRIMARY REST API" },
+        { name: "Node.js", src: "/stack/NodeJs.svg", level: "EVENT-DRIVEN RUNTIME" },
+        { name: "Express.js", src: "/stack/Express.png", level: "REST MICROSERVICES" },
+        { name: "Django", src: "/stack/django.svg", level: "PYTHON FRAMEWORK" },
+        { name: "Socket.IO", icon: SiSocketdotio, color: "currentColor", level: "REAL-TIME WEBSOCKETS" },
+        { name: "REST APIs", icon: Terminal, color: "#00e5ff", level: "API SPECIFICATION" },
+        { name: "JWT Auth", icon: Terminal, color: "#00ff66", level: "STATELESS SECURITY" },
+      ],
     },
     {
-      category: "Databases & Tools",
-      description: "The infrastructure and databases that keep data secure, organized, and instantly accessible.",
+      category: "Databases & Cache",
+      code: "03. DATABASES",
+      icon: Database,
+      description: "Relational ACID databases, NoSQL stores, and in-memory caching systems.",
       logos: [
-        { name: "MongoDB", src: "/stack/mongodb_devicon.svg" },
-        { name: "PostgreSQL", src: "/stack/postgresql.svg" },
-        { name: "MySQL", src: "/stack/mysql.svg" },
-        { name: "Oracle", src: "/stack/oracle.svg" },
-        { name: "Git/GitHub", src: "/stack/Github.svg" },
-        { name: "Postman", src: "/stack/postman.svg" },
-        { name: "Docker", src: "/stack/Docker.svg" }
-      ]
+        { name: "PostgreSQL", src: "/stack/postgresql.svg", level: "RELATIONAL ACID" },
+        { name: "MySQL", src: "/stack/mysql.svg", level: "ENTERPRISE RDBMS" },
+        { name: "MongoDB", src: "/stack/mongodb_devicon.svg", level: "DOCUMENT NO-SQL" },
+        { name: "Redis", icon: SiRedis, color: "#DC382D", level: "IN-MEMORY CACHE & QUEUE" },
+      ],
     },
     {
-      category: "AI Models & Agents",
-      description: "Generative AI models and tools I use to augment development, automate workflows, and build intelligent features.",
+      category: "Tools & Execution Engines",
+      code: "04. TOOLS & QUEUES",
+      icon: Wrench,
+      description: "Container sandboxing, background queue processing, and automated execution engines.",
       logos: [
-        { name: "Ollama", icon: SiOllama, color: "#FFFFFF" },
-        { name: "Claude", icon: SiClaude, color: "#D97757" },
-        { name: "Gemini", icon: SiGooglegemini, color: "#8E75B2" },
-        { name: "DeepSeek", icon: SiDeepseek, color: "#4D7DF5" },
-        { name: "Codex", icon: RiOpenaiFill, color: "#10A37F" }
-      ]
-    }
+        { name: "Docker", src: "/stack/Docker.svg", level: "CONTAINER SANDBOX" },
+        { name: "BullMQ", icon: Layers, color: "#ffb000", level: "ASYNC JOB QUEUE" },
+        { name: "Judge0", icon: Terminal, color: "#00e5ff", level: "ONLINE JUDGE ENGINE" },
+        { name: "Git / GitHub", src: "/stack/Github.svg", level: "VERSION CONTROL" },
+        { name: "Postman", src: "/stack/postman.svg", level: "API TESTING" },
+      ],
+    },
+    {
+      category: "AI Models & APIs",
+      code: "05. AI APIS",
+      icon: Sparkles,
+      description: "Generative AI APIs and embeddings integrated into backend applications.",
+      logos: [
+        { name: "Gemini API", icon: SiGooglegemini, color: "#8E75B2", level: "EXPENSE • RAG API" },
+        { name: "Claude", icon: SiClaude, color: "#D97757", level: "CODE REVIEW ASSIST" },
+        { name: "OpenAI API", icon: RiOpenaiFill, color: "#10A37F", level: "API INTEGRATION" },
+        { name: "DeepSeek", icon: SiDeepseek, color: "#4D7DF5", level: "REASONING API" },
+        { name: "Ollama Local", icon: SiOllama, color: "currentColor", level: "LOCAL INFERENCE" },
+      ],
+    },
   ];
 
-  // Auto-play interval effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveLogoIndex((prev) => {
-        const currentCategoryLength = skills[activeCategory].logos.length;
-        if (prev + 1 >= currentCategoryLength) {
-          // Move to next category securely without callback race conditions
-          setActiveCategory((activeCategory + 1) % skills.length);
-          return 0; // Reset logo index for the new category
-        }
-        return prev + 1; // Move to next logo
-      });
-    }, 2000); // 2 seconds delay to make it move much slower and give time to read
-
-    return () => clearInterval(timer);
-  }, [activeCategory, skills.length]);
+  const currentCategory = skills[activeCategory];
 
   return (
-    <section id="skills" className="py-32 px-6 max-w-7xl mx-auto min-h-screen relative z-10 flex flex-col justify-center">
-      
-      {/* Minimalist Background Aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/[0.02] blur-[150px] rounded-full pointer-events-none z-0" />
+    <section id="skills" className="w-full py-2 sm:py-4 px-2 sm:px-4 md:px-8 max-w-[1440px] mx-auto">
+      <RetroWindow
+        title="04_SYS_CAPABILITIES.CFG"
+        badge="TECH_STACK"
+        statusText={`ACTIVE RACK: ${currentCategory.code} • READY`}
+        pathText="DIR: /HARDWARE/DRIVERS/SYS_CAPABILITIES.CFG"
+      >
+        <div className="flex flex-col gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-mono text-[var(--accent-color)] uppercase tracking-widest font-bold">
+                TECHNICAL STACK (FROM RESUME)
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-pixel font-bold text-[var(--text-main)]">
+              TECHNICAL SKILLS
+            </h2>
+          </div>
 
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
-        
-        {/* Left Column: Typography & Navigation */}
-        <div className="lg:col-span-5 flex flex-col justify-center">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-sm tracking-[0.3em] text-gray-400 uppercase mb-4 font-space"
-          >
-            Technical Expertise
-          </motion.h2>
-          
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-16 tracking-tight leading-tight"
-          >
-            The tools <br/><span className="text-gray-500">I build with.</span>
-          </motion.h3>
+          {/* 🌟 LARGER TABS MENU (Generous Padding & Big Font) */}
+          <div className="flex items-center gap-2 border-b-2 border-[var(--border-retro)] pb-px overflow-x-auto no-scrollbar">
+            {skills.map((item, idx) => {
+              const isActive = activeCategory === idx;
+              return (
+                <button
+                  key={item.category}
+                  type="button"
+                  onClick={() => setActiveCategory(idx)}
+                  className={`px-5 py-3 font-pixel text-xs sm:text-sm whitespace-nowrap border-t-2 border-l border-r border-[var(--border-retro)] transition-all cursor-pointer font-bold ${
+                    isActive
+                      ? 'bg-[var(--surface-window)] text-[var(--accent-color)] border-t-[var(--accent-color)] border-b-2 border-b-[var(--surface-window)] -mb-px z-10 shadow-[var(--shadow-hard-sm)]'
+                      : 'bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--surface-titlebar)]'
+                  }`}
+                >
+                  [{item.code}]
+                </button>
+              );
+            })}
+          </div>
 
-          <div className="flex flex-col gap-2">
-            {skills.map((skill, index) => (
-              <motion.button
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + (index * 0.1) }}
-                onClick={() => {
-                  setActiveCategory(index);
-                  setActiveLogoIndex(0);
-                }}
-                className={`text-left group relative py-4 px-6 border-l-2 transition-all duration-300 ${
-                  activeCategory === index 
-                    ? "border-white bg-white/[0.03]" 
-                    : "border-white/10 hover:border-white/30 hover:bg-white/[0.01]"
-                }`}
+          {/* Category Description Banner */}
+          <div className="p-4 sm:p-5 border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] flex items-start gap-3 shadow-[var(--shadow-hard-sm)]">
+            <span className="text-[var(--accent-color)] font-mono text-lg">&gt;</span>
+            <p className="text-xs sm:text-sm font-mono text-[var(--text-muted)] leading-relaxed">
+              <strong className="text-[var(--text-main)] uppercase tracking-wider text-sm">{currentCategory.category}: </strong>
+              {currentCategory.description}
+            </p>
+          </div>
+
+          {/* Skills Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {currentCategory.logos.map((skill, i) => (
+              <div
+                key={i}
+                className="retro-btn p-4 flex flex-col justify-between border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] hover:border-[var(--accent-color)] transition-all group min-h-[90px]"
               >
-                <h4 className={`text-xl md:text-2xl font-space font-semibold transition-colors duration-300 ${
-                  activeCategory === index ? "text-white" : "text-gray-500 group-hover:text-gray-300"
-                }`}>
-                  {skill.category}
-                </h4>
-              </motion.button>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-none border border-[var(--border-retro)] bg-[var(--surface-window)] flex items-center justify-center p-2 relative shrink-0">
+                    {skill.src ? (
+                      <Image
+                        src={skill.src}
+                        alt={skill.name}
+                        width={26}
+                        height={26}
+                        className="object-contain filter contrast-125"
+                      />
+                    ) : (
+                      skill.icon && <skill.icon size={22} style={{ color: skill.color }} />
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs sm:text-sm font-mono font-bold text-[var(--text-main)] group-hover:text-white truncate">
+                      {skill.name}
+                    </span>
+                    {skill.level && (
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] group-hover:text-[var(--text-main)]">
+                        {skill.level}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
+
         </div>
-
-        {/* Right Column: The Display Stage */}
-        <div className="lg:col-span-7 flex items-center justify-center min-h-[400px]">
-          <div className="w-full relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-2xl">
-            
-            {/* Subtle inner glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCategory}
-                initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10"
-              >
-                <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-10 max-w-lg">
-                  {skills[activeCategory].description}
-                </p>
-
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-12 justify-items-center">
-                  {skills[activeCategory].logos.map((logo: any, i: number) => {
-                    const isHighlighted = i === activeLogoIndex;
-
-                    return (
-                      <motion.div 
-                        key={logo.name}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05, duration: 0.3 }}
-                        className="flex flex-col items-center gap-4 group/icon w-full cursor-pointer"
-                        onMouseEnter={() => setActiveLogoIndex(i)}
-                      >
-                        {logo.icon ? (
-                          <div className="relative w-12 h-12 md:w-14 md:h-14 flex-shrink-0 flex items-center justify-center" title={logo.name}>
-                            <div className={`absolute inset-0 bg-white/20 blur-xl rounded-full scale-150 transition-opacity duration-300 ${isHighlighted ? 'opacity-100' : 'opacity-0 group-hover/icon:opacity-100'}`} />
-                            <logo.icon 
-                              className={`w-10 h-10 md:w-12 md:h-12 transition-all duration-500 transform ${isHighlighted ? 'opacity-100 scale-110 -translate-y-1' : 'opacity-70 text-gray-500 group-hover/icon:opacity-100 group-hover/icon:scale-110 group-hover/icon:-translate-y-1'}`} 
-                              style={isHighlighted ? { color: logo.color } : undefined}
-                            />
-                          </div>
-                        ) : (
-                          logo.src && (
-                            <div className="relative w-12 h-12 md:w-14 md:h-14 flex-shrink-0" title={logo.name}>
-                              <div className={`absolute inset-0 bg-white/20 blur-xl rounded-full scale-150 transition-opacity duration-300 ${isHighlighted ? 'opacity-100' : 'opacity-0 group-hover/icon:opacity-100'}`} />
-                              <Image 
-                                src={logo.src}
-                                alt={logo.name}
-                                fill
-                                className={`object-contain transition-all duration-500 transform ${isHighlighted ? 'grayscale-0 opacity-100 scale-110 -translate-y-1' : 'grayscale opacity-50 group-hover/icon:grayscale-0 group-hover/icon:opacity-100 group-hover/icon:scale-110 group-hover/icon:-translate-y-1'}`}
-                              />
-                            </div>
-                          )
-                        )}
-                        <span className={`text-xs font-space font-medium transition-colors duration-300 tracking-wide text-center ${isHighlighted ? 'text-white' : 'text-gray-500 group-hover/icon:text-white'}`}>
-                          {logo.name}
-                        </span>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-            
-          </div>
-        </div>
-
-      </div>
+      </RetroWindow>
     </section>
   );
 }

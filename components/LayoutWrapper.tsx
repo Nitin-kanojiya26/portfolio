@@ -1,31 +1,35 @@
 'use client';
-import { motion } from 'framer-motion';
-import ParticleBackground from './ParticleBackground';
+
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import BootIntro from './BootIntro';
+import RetroBackground from './RetroBackground';
+import ScrollProgress from './ScrollProgress';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <>
-      {/* 1. Ultra-minimalist dark gradient background */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/[0.04] via-transparent to-transparent" />
-      
-      {/* Second faint glow for balance */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-white/[0.02] via-transparent to-transparent" />
+      {/* Slim Retro Scroll Progress Bar & Percentage HUD */}
+      <ScrollProgress />
 
-      {/* 2. Extremely subtle, sparse particles for a touch of life without clutter */}
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.15]">
-        <ParticleBackground />
-      </div>
+      {/* Retro Dither Desktop Canvas Pattern */}
+      <div 
+        className="fixed inset-0 z-0 pointer-events-none dither-pattern" 
+        style={{ opacity: 'var(--pattern-dither-opacity)' }}
+        aria-hidden="true"
+      />
 
-      {/* 3. Clean, professional fade-in entrance for the entire website */}
+      {/* Floating Retro Phosphor Dust Canvas */}
+      <RetroBackground />
+
+      {/* Main Page Layout Container */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.2,
-          duration: 1.4,
-          ease: [0.16, 1, 0.3, 1] // Apple-style silky smooth ease
-        }}
-        className="w-full min-h-screen relative z-10"
+        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35 }}
+        className="w-full min-h-screen relative z-10 overflow-x-hidden"
       >
         {children}
       </motion.div>

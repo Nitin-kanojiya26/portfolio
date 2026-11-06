@@ -1,59 +1,175 @@
 @import "tailwindcss";
 
-@theme {
-  --color-background: #0a0a0a;
-  --color-foreground: #ffffff;
-  --color-accent: #3b82f6;
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.5);
-  --font-space: "Space Grotesk", sans-serif;
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root,
+[data-theme="light"],
+.light {
+  /* Crisp White Architectural Workstation Theme (Light Default) */
+  --bg-canvas: #f6f7f3;
+  --surface-window: #ffffff;
+  --surface-titlebar: #eeeee9;
+  --surface-panel: #f3f4ee;
+  --text-main: #111417;
+  --text-muted: #52565e;       /* High-contrast legible neutral */
+  --text-dim: #7f8691;
+  --neutral-eggshell: #F2ECDD;
+  --neutral-linen: #F2EFE8;
+  --border-retro: #1b1e22;
+  --border-subtle: #d2d5cd;
+  --border-highlight: #52565e;
+  --shadow-hard: 4px 4px 0px #1a1c20;
+  --shadow-hard-sm: 2px 2px 0px #1a1c20;
+  --shadow-hard-lg: 6px 6px 0px #1a1c20;
+  --accent-color: #0044cc;
+  --accent-hover: #0033aa;
+  --accent-contrast: #ffffff;
+  --accent-glow: rgba(0, 68, 204, 0.15);
+  --grid-line: rgba(0, 0, 0, 0.04);
 }
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  cursor: none; /* For custom cursor */
-}
-
-/* Base custom classes */
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 1rem;
+[data-theme="dark"],
+.dark {
+  /* Ultra-Refined Matte Black Workstation Theme (Dark Mode) */
+  --bg-canvas: #08090a;
+  --surface-window: #121315;
+  --surface-titlebar: #18191c;
+  --surface-panel: #0e0f11;
+  
+  /* Curated Retro Neutrals */
+  --text-main: #F2EFE8;        /* Off-White Linen (portfolio palette neutral) */
+  --text-muted: #A5A9AE;       /* Cadet Gray (secondary legible neutral) */
+  --text-dim: #5F6266;         /* Dim Gray (subtle technical telemetry) */
+  --neutral-eggshell: #F2ECDD; /* Eggshell (warm retro-friendly neutral) */
+  --neutral-linen: #F2EFE8;    /* Off-White Linen */
+  
+  --border-retro: #5F6266;     /* Dim Gray (classic Black & White palette border) */
+  --border-subtle: #2d2e33;
+  --border-highlight: #A5A9AE; /* Cadet Gray (sharp window highlight) */
+  --shadow-hard: 4px 4px 0px #000000;
+  --shadow-hard-sm: 2px 2px 0px #000000;
+  --shadow-hard-lg: 6px 6px 0px #000000;
+  
+  /* Inner Box Accents (Replacing the cold blue with warm Eggshell / Linen) */
+  --accent-color: #F2ECDD;     /* Eggshell warm neutral highlight */
+  --accent-hover: #F2EFE8;     /* Off-White Linen */
+  --accent-contrast: #08090a;  /* Deep black contrast */
+  --accent-glow: rgba(242, 236, 221, 0.2);
+  --grid-line: rgba(255, 255, 255, 0.025);
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
 }
 
-/* 3D Transform Utilities for Flip Card */
-.perspective-1000 {
-  perspective: 1000px;
-}
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-.backface-hidden {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-.rotate-y-180 {
-  transform: rotateY(180deg);
-}
-.animate-pulse-slow {
-  animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  min-height: 100vh;
+  background-image: 
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 1;
+/* Refined Matte Window Utility Classes */
+.retro-window {
+  background-color: var(--surface-window);
+  border: 1px solid var(--border-retro);
+  box-shadow: var(--shadow-hard);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.retro-titlebar {
+  background-color: var(--surface-titlebar);
+  border-bottom: 1px solid var(--border-retro);
+}
+
+.retro-panel {
+  background-color: var(--surface-panel);
+  border: 1px solid var(--border-retro);
+}
+
+.retro-btn {
+  background-color: var(--surface-panel);
+  border: 1px solid var(--border-retro);
+  box-shadow: var(--shadow-hard-sm);
+  color: var(--text-main);
+  transition: transform 70ms ease, box-shadow 70ms ease, background-color 150ms ease, border-color 150ms ease;
+  cursor: pointer;
+}
+
+.retro-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--accent-contrast);
+  border-color: var(--accent-color);
+}
+
+.retro-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+/* 1-Bit Dither Halftone Pattern */
+.dither-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0zm2 2h1v1H2z' fill='%23888888' fill-opacity='0.12'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Titlebar Stripes Pattern */
+.titlebar-stripes {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 1px,
+    var(--border-retro) 1px,
+    var(--border-retro) 2px
+  );
+  opacity: 0.45;
+}
+
+/* Typography Classes */
+.font-pixel {
+  font-family: var(--font-pixel), "Courier New", monospace;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+/* CRT Screen Scanline Glow */
+.crt-screen-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), 
+  linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Custom 3D Wireframe Hexahedron Cursor Support */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
   }
-  50% {
-    opacity: 0.5;
-  }
+}
+
+/* Keyboard Accessibility Focus Rings */
+:focus-visible {
+  outline: 2px solid var(--accent-color) !important;
+  outline-offset: 2px !important;
+}
+
+/* Deep Linking Section Breathing Room Below Fixed Menu Bar */
+section[id] {
+  scroll-margin-top: 3.5rem;
 }

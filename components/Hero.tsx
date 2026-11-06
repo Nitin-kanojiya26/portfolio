@@ -1,92 +1,195 @@
 'use client';
-import { motion } from 'framer-motion';
+
+import React, { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import RetroComputerCanvas from './RetroComputerCanvas';
 
 export default function Hero() {
+  const shouldReduceMotion = useReducedMotion();
+  const fullTagline = 'Backend Developer | AI Engineering';
+  const [displayedTagline, setDisplayedTagline] = useState(
+    shouldReduceMotion ? fullTagline : ''
+  );
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  // Typewriter effect for role tagline
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      index++;
+      setDisplayedTagline(fullTagline.slice(0, index));
+      if (index >= fullTagline.length) {
+        clearInterval(typingInterval);
+      }
+    }, 40);
+
+    // Blinking terminal cursor
+    const cursorInterval = setInterval(() => {
+      setCursorVisible((prev) => !prev);
+    }, 450);
+
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(cursorInterval);
+    };
+  }, [shouldReduceMotion]);
+
   return (
-    <section id="home" className="relative min-h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-[#0a0a0a]">
-      
-      {/* Minimalist Grid Lines Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" 
-           style={{ backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', backgroundSize: '100px 100px' }} 
-      />
-
-      <div className="z-10 w-full max-w-7xl mx-auto flex flex-col items-start mt-20">
-        
-        {/* Availability Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] mb-12"
-        >
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs uppercase tracking-widest text-gray-400 font-space font-medium">Available for Internship</span>
-        </motion.div>
-        
-        {/* Massive Minimalist Typography */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          className="flex flex-col gap-2 mb-10"
-        >
-          <h1 className="text-[12vw] md:text-[120px] font-space font-bold tracking-tighter text-white leading-[0.9] whitespace-nowrap">
-            NITIN KANOJIYA.
-          </h1>
-          <h2 className="text-2xl sm:text-3xl md:text-6xl font-space font-light tracking-tight text-gray-500 leading-tight">
-            Backend Developer & <br className="hidden md:block" /> Software Engineer.
-          </h2>
-        </motion.div>
-
-        {/* Minimalist Bio */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 1 }}
-          className="text-gray-400 text-lg max-w-xl leading-relaxed mb-16 font-light"
-        >
-          Computer Engineering undergraduate focused on backend development and full-stack engineering. I build robust APIs, integrate AI capabilities, and write clean, efficient code.
-        </motion.p>
-
-        {/* Creative Minimalist Action Links */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex items-center gap-8"
-        >
-          <a
-            href="#projects"
-            className="group flex items-center gap-4 text-white text-lg font-space font-medium"
-          >
-            <span className="relative overflow-hidden">
-              <span className="block group-hover:-translate-y-full transition-transform duration-500 ease-[0.16,1,0.3,1]">Selected Works</span>
-              <span className="absolute inset-0 block translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[0.16,1,0.3,1]">Selected Works</span>
-            </span>
-            <div className="w-12 h-[1px] bg-white group-hover:w-20 transition-all duration-500 ease-out" />
-          </a>
-          
-          <a
-            href="/Nitin_Kanojiya_Resume.pdf"
-            target="_blank"
-            className="group flex items-center gap-4 text-gray-500 hover:text-white text-lg font-space transition-colors duration-300"
-          >
-            Resume
-          </a>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-4 text-gray-600"
+    <section
+      id="home"
+      className="relative w-full flex flex-col justify-center items-center pt-2 sm:pt-4 pb-2 sm:pb-3 px-2 sm:px-4 md:px-8 bg-[var(--bg-canvas)] overflow-hidden"
+    >
+      {/* Edge-to-Edge Retro CRT Workstation Bezel (Covers Full Screen) */}
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 36, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[1400px] my-auto retro-window border-2 sm:border-4 border-[var(--border-retro)] bg-[var(--surface-window)] shadow-[var(--shadow-hard-lg)] overflow-hidden"
       >
-        <span className="text-[10px] uppercase tracking-widest font-space -rotate-90 origin-bottom mb-8">Scroll</span>
-        <div className="w-[1px] h-16 bg-gradient-to-b from-gray-600 to-transparent" />
-      </motion.div>
+        
+        {/* Terminal Window Header Bar */}
+        <header className="retro-titlebar px-3 sm:px-4 py-2 flex items-center justify-between border-b border-[var(--border-retro)] bg-[var(--surface-titlebar)] text-xs font-pixel select-none">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 border border-[var(--border-retro)] bg-[var(--surface-window)] inline-flex items-center justify-center text-[8px]">
+              ×
+            </span>
+            <span className="w-3 h-3 border border-[var(--border-retro)] bg-[var(--surface-window)] inline-flex items-center justify-center text-[8px]">
+              +
+            </span>
+            <span className="font-bold tracking-wider text-[var(--text-main)] ml-1">
+              NITIN WORKSTATION • 1984
+            </span>
+          </div>
 
+          <div className="flex items-center gap-3 font-mono text-[11px]">
+            <div className="flex items-center gap-1.5 text-emerald-500">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>ONLINE • READY</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Workstation Screen: Two Column Grid (Desktop) / Stacked (Mobile) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 p-4 sm:p-6 md:p-8 items-center">
+          
+          {/* Left Column: Big Interactive 3D Animated Retro Computer */}
+          <div className="lg:col-span-6 w-full flex flex-col items-center justify-center order-1 lg:order-2">
+            <div className="w-full aspect-square max-w-[340px] sm:max-w-[420px] lg:max-w-[480px] border-2 border-[var(--border-retro)] bg-black p-2 relative shadow-[inset_0_0_25px_rgba(0,0,0,0.85)]">
+              {/* Scanline overlay for the monitor */}
+              <div className="absolute inset-0 dither-pattern opacity-25 pointer-events-none" />
+              
+              {/* Header inside screen */}
+              <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[10px] font-pixel text-[var(--neutral-eggshell)] z-10 pointer-events-none">
+                <span>3D VECTOR DISPLAY</span>
+                <span>MODEL: RETRO_PC_5150</span>
+              </div>
+
+              {/* The Live Interactive 3D Wireframe Computer */}
+              <RetroComputerCanvas />
+            </div>
+          </div>
+
+          {/* Right Column: Hero Typography, Story & Mechanical Action Buttons */}
+          <div className="lg:col-span-6 flex flex-col items-start gap-3 sm:gap-4 order-2 lg:order-1">
+            
+            {/* Huge Name Heading */}
+            <div className="flex flex-col gap-1 w-full">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-pixel font-bold tracking-tight text-[var(--text-main)] leading-none break-words">
+                NITIN KANOJIYA
+              </h1>
+
+              {/* Animated Typewriter Role Prompt */}
+              <div className="flex items-center text-sm sm:text-xl md:text-2xl font-mono text-[var(--accent-color)] font-bold mt-1">
+                <span className="text-[var(--text-muted)] mr-2">&gt;</span>
+                <span>{displayedTagline}</span>
+                <span
+                  className={`inline-block w-2.5 h-5 bg-[var(--accent-color)] ml-1 ${
+                    cursorVisible ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+
+            {/* Narrative Bio - Concise & ATS Friendly */}
+            <p className="text-[var(--text-muted)] text-xs sm:text-sm md:text-base leading-relaxed font-sans font-normal border-l-2 border-[var(--border-retro)] pl-3 sm:pl-4 my-1 max-w-xl">
+              <strong>B.Tech Computer Engineering</strong> student at <strong>Dharmsinh Desai University</strong> with strong foundations in Data Structures, Algorithms, backend architecture, and full-stack software development.
+            </p>
+
+            {/* Quick Specs Metric Ribbon (Clean & Verified) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full text-[11px] sm:text-xs font-mono">
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+                <span className="text-[var(--text-muted)] block text-[9px]">DEGREE</span>
+                <strong className="text-[var(--text-main)]">B.Tech Comp Engg</strong>
+              </div>
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+                <span className="text-[var(--text-muted)] block text-[9px]">INSTITUTION</span>
+                <strong className="text-[var(--text-main)]">DDU Nadiad</strong>
+              </div>
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+                <span className="text-[var(--text-muted)] block text-[9px]">LOCATION</span>
+                <strong className="text-[var(--text-main)]">Vadodara, IN</strong>
+              </div>
+            </div>
+
+            {/* Mechanical Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1 w-full">
+              <a
+                href="#projects"
+                className="retro-btn px-4 sm:px-5 py-2.5 font-pixel text-xs sm:text-sm tracking-wider uppercase font-bold flex items-center gap-2"
+              >
+                <span>[▶]</span>
+                <span>PROJECTS</span>
+              </a>
+
+              <a
+                href="/Nitin_Kanojiya_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="retro-btn px-4 sm:px-5 py-2.5 font-pixel text-xs sm:text-sm tracking-wider uppercase font-bold flex items-center gap-2"
+              >
+                <span>[↓]</span>
+                <span>RESUME PDF</span>
+              </a>
+
+              <a
+                href="#contact"
+                className="retro-btn px-4 sm:px-5 py-2.5 font-pixel text-xs sm:text-sm tracking-wider uppercase font-bold flex items-center gap-2 text-[var(--accent-color)]"
+              >
+                <span>[✉]</span>
+                <span>CONTACT</span>
+              </a>
+            </div>
+
+            {/* Animated Scroll Down Prompt */}
+            <div className="pt-2 w-full flex items-center justify-between border-t border-[var(--border-retro)] mt-1">
+              <a
+                href="#about"
+                className="inline-flex items-center gap-2 text-xs font-mono text-[var(--accent-color)] hover:text-[var(--text-main)] transition-colors group cursor-pointer"
+              >
+                <span className="w-5 h-5 border border-[var(--border-retro)] bg-[var(--surface-titlebar)] flex items-center justify-center text-[10px] text-[var(--accent-color)] group-hover:border-[var(--accent-color)] shadow-[0_0_8px_var(--accent-glow)] animate-bounce">
+                  ▼
+                </span>
+                <span className="tracking-wider uppercase font-bold text-xs">
+                  SCROLL DOWN TO EXPLORE
+                </span>
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Workstation Screen Bottom Status Bar */}
+        <footer className="border-t border-[var(--border-retro)] bg-[var(--surface-titlebar)] px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between text-[10px] font-mono text-[var(--text-muted)]">
+          <span>HOST: NITIN KANOJIYA • B.TECH COMPUTER ENGINEERING</span>
+          <span className="hidden sm:inline">INTERACTION: DRAG TO ROTATE 3D WIREFRAME</span>
+          <span className="text-emerald-400 font-bold">WORKSTATION: ONLINE</span>
+        </footer>
+
+      </motion.div>
     </section>
   );
 }
