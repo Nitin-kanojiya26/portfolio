@@ -20,7 +20,7 @@ export default function Footer() {
 
         {/* Center Copyright */}
         <div className="font-mono text-[10px] sm:text-xs text-[var(--text-muted)]">
-          © 2026 Nitin Kanojiya. Built with Next.js &amp; Retro Workstation Design.
+          © 2026 Nitin Kanojiya. Built with Next.js
         </div>
 
         {/* Right Action */}

@@ -1,7 +1,7 @@
 # 🚀 Nitin Kanojiya | Software Engineer Portfolio
 
 <div align="center">
-  <img src="./public/screenshot.png" alt="Portfolio Preview" width="100%" />
+  <img src="./public/screenshot.jpg" alt="Portfolio Preview" width="100%" />
 </div>
 
 ## 🌌 Overview
