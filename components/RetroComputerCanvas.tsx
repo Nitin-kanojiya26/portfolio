@@ -18,6 +18,7 @@ export default function RetroComputerCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const [isInteracting, setIsInteracting] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -39,13 +40,14 @@ export default function RetroComputerCanvas() {
     let lastPointerY = 0;
     let frameCount = 0;
 
-    // Handle high DPI crisp rendering
+    // Handle high DPI crisp rendering & mobile viewport check
     const handleResize = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = parent.clientWidth;
       const height = parent.clientHeight || width;
+      setIsMobile(width < 500 || window.innerWidth < 640);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
@@ -58,6 +60,12 @@ export default function RetroComputerCanvas() {
       isVisible = !document.hidden;
     };
     document.addEventListener('visibilitychange', handleVisibility);
+
+    // Battery-efficient Intersection Observer: pause rendering when scrolled out of view
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting && !document.hidden;
+    }, { threshold: 0.05 });
+    observer.observe(canvas);
 
     // Highly Detailed 3D Geometry: Monitor, Bezel, Dual Drive Bays, Keyboard Rows
     const vertices: Point3D[] = [
@@ -224,9 +232,10 @@ export default function RetroComputerCanvas() {
 
       const width = canvas.width / (window.devicePixelRatio || 1);
       const height = canvas.height / (window.devicePixelRatio || 1);
+      const isMob = width < 500;
       const cx = width / 2;
-      const cy = height / 2 + 15;
-      const fov = Math.min(width, height) * 0.95;
+      const cy = isMob ? height / 2 + 8 : height / 2 + 15;
+      const fov = isMob ? Math.min(width, height) * 0.88 : Math.min(width, height) * 0.95;
       const cameraDist = 300;
 
       ctx.clearRect(0, 0, width, height);
@@ -305,7 +314,47 @@ export default function RetroComputerCanvas() {
       }
       ctx.stroke();
 
-      // 4. Draw Keyboard Key Row Horizontal Dividers (Cadet Gray)
+      // 4. Calculate Synchronized Keyboard Typing Timeline
+      // 5 letters: 'h', 'e', 'l', 'l', 'o' mapped to physical keyboard coordinates
+      const helloLetters = [
+        { char: 'h', color: '#FF3B30', u: 0.52, v: 0.46 }, // 'h' key
+        { char: 'e', color: '#FF9500', u: 0.32, v: 0.22 }, // 'e' key
+        { char: 'l', color: '#FFCC00', u: 0.72, v: 0.46 }, // 'l' key
+        { char: 'l', color: '#34C759', u: 0.72, v: 0.46 }, // 'l' key
+        { char: 'o', color: '#007AFF', u: 0.76, v: 0.22 }, // 'o' key
+      ];
+
+      const cycleLength = 250;
+      const curFrame = frameCount % cycleLength;
+
+      let visibleCount = 0;
+      let activeKeyIdx = -1;
+
+      if (curFrame < 20) {
+        visibleCount = 0;
+      } else if (curFrame < 38) {
+        visibleCount = 1; // 'h'
+        activeKeyIdx = curFrame < 30 ? 0 : -1;
+      } else if (curFrame < 56) {
+        visibleCount = 2; // 'he'
+        activeKeyIdx = curFrame < 48 ? 1 : -1;
+      } else if (curFrame < 74) {
+        visibleCount = 3; // 'hel'
+        activeKeyIdx = curFrame < 66 ? 2 : -1;
+      } else if (curFrame < 92) {
+        visibleCount = 4; // 'hell'
+        activeKeyIdx = curFrame < 84 ? 3 : -1;
+      } else if (curFrame < 220) {
+        visibleCount = 5; // 'hello' complete
+        activeKeyIdx = curFrame < 102 ? 4 : -1;
+      } else {
+        // terminal backspace
+        const eraseStep = Math.floor((curFrame - 220) / 6);
+        visibleCount = Math.max(0, 5 - eraseStep);
+        activeKeyIdx = -1;
+      }
+
+      // Draw Keyboard Rows & Active Keycaps
       const pKeyL = projected[40];
       const pKeyR = projected[41];
       const pKeyBL = projected[43];
@@ -325,9 +374,55 @@ export default function RetroComputerCanvas() {
           ctx.lineTo(xB, yB);
           ctx.stroke();
         }
+
+        // Live Keystroke Illumination on the 3D Mechanical Keyboard
+        if (activeKeyIdx >= 0) {
+          const activeLetter = helloLetters[activeKeyIdx];
+          const topX = pKeyL.x + (pKeyR.x - pKeyL.x) * activeLetter.u;
+          const topY = pKeyL.y + (pKeyR.y - pKeyL.y) * activeLetter.u;
+          const botX = pKeyBL.x + (pKeyBR.x - pKeyBL.x) * activeLetter.u;
+          const botY = pKeyBL.y + (pKeyBR.y - pKeyBR.y) * activeLetter.u;
+
+          const keyX = topX + (botX - topX) * activeLetter.v;
+          const keyY = topY + (botY - topY) * activeLetter.v;
+
+          const keyW = Math.max(8, Math.min(18, Math.abs(pKeyR.x - pKeyL.x) * 0.09));
+          const keyH = Math.max(5, Math.min(12, Math.abs(pKeyBL.y - pKeyL.y) * 0.18));
+
+          ctx.save();
+          ctx.shadowColor = activeLetter.color;
+          ctx.shadowBlur = 12;
+          ctx.fillStyle = activeLetter.color;
+          ctx.beginPath();
+          ctx.rect(keyX - keyW / 2, keyY - keyH / 2, keyW, keyH);
+          ctx.fill();
+
+          // Letter stamped on keycap
+          ctx.fillStyle = '#000000';
+          ctx.font = `bold ${Math.max(6, Math.round(keyH * 0.75))}px monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(activeLetter.char.toUpperCase(), keyX, keyY);
+
+          // Subtle energy trace rising toward monitor screen
+          if (projected[14] && projected[15]) {
+            const pScreenBottomX = (projected[14].x + projected[15].x) / 2;
+            const pScreenBottomY = (projected[14].y + projected[15].y) / 2;
+            ctx.strokeStyle = activeLetter.color;
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 6;
+            ctx.setLineDash([2, 3]);
+            ctx.beginPath();
+            ctx.moveTo(keyX, keyY - keyH / 2);
+            ctx.lineTo(pScreenBottomX, pScreenBottomY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+          ctx.restore();
+        }
       }
 
-      // 5. Draw Iconic 1984 Colorful "hello" On Monitor Screen
+      // 5. Draw Dynamic Animated "hello" Typing On Monitor Screen
       const pScreenTL = projected[12];
       const pScreenTR = projected[13];
       const pScreenBR = projected[14];
@@ -342,15 +437,6 @@ export default function RetroComputerCanvas() {
         const midX = (pScreenTL.x + pScreenTR.x + pScreenBR.x + pScreenBL.x) / 4;
         const midY = (pScreenTL.y + pScreenTR.y + pScreenBR.y + pScreenBL.y) / 4;
 
-        // Iconic 1984 Macintosh style colorful "hello" palette
-        const helloLetters = [
-          { char: 'h', color: '#FF3B30' }, // Apple Red
-          { char: 'e', color: '#FF9500' }, // Apple Orange
-          { char: 'l', color: '#FFCC00' }, // Apple Yellow
-          { char: 'l', color: '#34C759' }, // Apple Green
-          { char: 'o', color: '#007AFF' }, // Apple Blue
-        ];
-
         const fontSize = Math.max(13, Math.min(24, sWidth * 0.26));
         ctx.font = `italic bold ${Math.round(fontSize)}px "Brush Script MT", "Comic Sans MS", "Caveat", cursive, sans-serif`;
         ctx.textAlign = 'center';
@@ -360,22 +446,41 @@ export default function RetroComputerCanvas() {
         const letterSpacing = totalHelloWidth / helloLetters.length;
         const startX = midX - (totalHelloWidth / 2) + (letterSpacing / 2);
 
-        // Glowing colorful letters mapped dynamically to the 3D screen
+        // Render letters typed so far
         ctx.shadowBlur = 6;
-        helloLetters.forEach((item, idx) => {
+        for (let idx = 0; idx < visibleCount; idx++) {
+          const item = helloLetters[idx];
           ctx.fillStyle = item.color;
           ctx.shadowColor = item.color;
           const letterX = startX + idx * letterSpacing;
-          const floatY = midY - 3 + Math.sin(frameCount * 0.08 + idx * 0.6) * 1.5;
+          const floatY = visibleCount === 5
+            ? midY - 3 + Math.sin(frameCount * 0.08 + idx * 0.6) * 1.5
+            : midY - 3;
           ctx.fillText(item.char, letterX, floatY);
-        });
+        }
 
-        // Subtle retro cursor prompt below hello
+        // Live blinking retro terminal cursor beside currently typed text
+        const cursorX = visibleCount === 0
+          ? midX
+          : startX + visibleCount * letterSpacing - (letterSpacing * 0.2);
+        const cursorBlink = Math.floor(frameCount / 14) % 2 === 0;
+
+        if (cursorBlink && visibleCount < 5) {
+          ctx.font = `${Math.round(fontSize * 0.8)}px monospace`;
+          ctx.fillStyle = '#00e5ff';
+          ctx.shadowColor = '#00e5ff';
+          ctx.shadowBlur = 6;
+          ctx.fillText('█', cursorX, midY - 3);
+        }
+
+        // Telemetry prompt below hello
         ctx.shadowBlur = 0;
         ctx.font = `${Math.max(7, Math.min(9, sWidth * 0.09))}px monospace`;
-        ctx.fillStyle = '#A5A9AE';
-        const blink = Math.floor(frameCount / 25) % 2 === 0;
-        ctx.fillText(blink ? '> NITIN_OS █' : '> NITIN_OS  ', midX, midY + fontSize * 0.8);
+        ctx.fillStyle = activeKeyIdx >= 0 ? '#00e5ff' : '#A5A9AE';
+        const statusPrompt = activeKeyIdx >= 0
+          ? `> KEY: [${helloLetters[activeKeyIdx].char.toUpperCase()}]`
+          : (Math.floor(frameCount / 25) % 2 === 0 ? '> NITIN_OS █' : '> NITIN_OS  ');
+        ctx.fillText(statusPrompt, midX, midY + fontSize * 0.82);
 
         ctx.restore();
       }
@@ -411,6 +516,7 @@ export default function RetroComputerCanvas() {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibility);
+      observer.disconnect();
       canvas.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
@@ -418,14 +524,20 @@ export default function RetroComputerCanvas() {
   }, [shouldReduceMotion]);
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center select-none cursor-grab active:cursor-grabbing">
+    <div
+      className="relative w-full h-full flex flex-col items-center justify-center select-none cursor-grab active:cursor-grabbing"
+      style={{ touchAction: 'pan-y' }}
+    >
       <canvas
         ref={canvasRef}
+        style={{ touchAction: 'pan-y' }}
         className="w-full h-full max-h-[460px] aspect-square object-contain"
         aria-label="Interactive 3D Retro Computer Wireframe Model"
       />
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-black/90 border border-[#5F6266] text-[#F2ECDD] text-[10px] font-mono tracking-wider whitespace-nowrap pointer-events-none shadow-[0_0_10px_rgba(0,0,0,0.8)]">
-        {isInteracting ? 'ROTATING 3D MODEL • VECTOR PERSPECTIVE' : 'DRAG TO ROTATE 3D WORKSTATION'}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-black/90 border border-[#5F6266] text-[#F2ECDD] text-[9px] sm:text-[10px] font-mono tracking-wider whitespace-nowrap pointer-events-none shadow-[0_0_10px_rgba(0,0,0,0.8)]">
+        {isInteracting
+          ? 'ROTATING 3D MODEL'
+          : (isMobile ? 'TOUCH TO ROTATE' : 'DRAG TO ROTATE 3D WORKSTATION')}
       </div>
     </div>
   );

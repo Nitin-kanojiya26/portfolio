@@ -31,10 +31,10 @@ export default function RetroWindow({
   return (
     <motion.article
       id={id}
-      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 48, scale: 0.97 }}
-      whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.12, margin: '0px 0px -40px 0px' }}
-      transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 20 }}
+      whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.08, margin: '0px 0px -40px 0px' }}
+      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
       className={`retro-window w-full rounded-none overflow-hidden my-4 sm:my-6 border-2 border-[var(--border-retro)] bg-[var(--surface-window)] shadow-[var(--shadow-hard-lg)] relative group ${className} ${
         isMaximized
           ? 'fixed inset-2 sm:inset-4 z-50 my-0 overflow-y-auto max-h-[96vh] shadow-[0_0_50px_rgba(0,0,0,0.9)]'

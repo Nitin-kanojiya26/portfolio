@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import BootIntro from './BootIntro';
+import ContextMenuLoader from './ContextMenuLoader';
 import RetroBackground from './RetroBackground';
 import ScrollProgress from './ScrollProgress';
 
@@ -11,6 +11,9 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
+      {/* Fast Mouse Right-Click Context Menu Initializer */}
+      <ContextMenuLoader />
+
       {/* Slim Retro Scroll Progress Bar & Percentage HUD */}
       <ScrollProgress />
 
