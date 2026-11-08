@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useReducedMotion } from 'framer-motion';
 
 interface RetroRadarProps {
@@ -12,7 +12,30 @@ interface VisitorLocation {
   country: string;
   lat: number;
   lng: number;
+  source: 'GPS' | 'IP' | 'DEFAULT';
   ip?: string;
+}
+
+// Vadodara Station Coordinates (Nitin's Node)
+const VADODARA = {
+  lat: 22.3072,
+  lng: 73.1812,
+  name: 'Vadodara, India',
+};
+
+// Great-circle distance using Haversine formula
+function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
 }
 
 export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) {
@@ -22,285 +45,354 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
   const [location, setLocation] = useState<VisitorLocation>({
     city: 'Detecting...',
     country: 'Global Node',
-    lat: 22.3072,
-    lng: 73.1812,
+    lat: VADODARA.lat,
+    lng: VADODARA.lng,
+    source: 'DEFAULT',
   });
+  const [isLocating, setIsLocating] = useState(false);
 
-  // Fetch real visitor location like original portfolio
-  useEffect(() => {
-    let isMounted = true;
-    fetch('https://ipapi.co/json/')
-      .then((res) => res.json())
-      .then((data) => {
-        if (!isMounted) return;
-        if (data && data.latitude && data.longitude) {
+  // Fetch location via IP fallback services
+  const fetchIpLocation = useCallback(async () => {
+    try {
+      // Primary IP service: ipwho.is (fast, generous free limits)
+      const res = await fetch('https://ipwho.is/');
+      const data = await res.json();
+      if (data && data.success && data.latitude && data.longitude) {
+        setLocation({
+          city: data.city || data.region || 'Visitor Node',
+          country: data.country || 'Earth',
+          lat: data.latitude,
+          lng: data.longitude,
+          source: 'IP',
+          ip: data.ip,
+        });
+        return;
+      }
+    } catch {
+      // Fallback IP service: ipapi.co
+      try {
+        const res2 = await fetch('https://ipapi.co/json/');
+        const data2 = await res2.json();
+        if (data2 && data2.latitude && data2.longitude) {
           setLocation({
-            city: data.city || 'Visitor Node',
-            country: data.country_name || 'Earth',
-            lat: data.latitude,
-            lng: data.longitude,
-            ip: data.ip,
+            city: data2.city || 'Visitor Node',
+            country: data2.country_name || 'Earth',
+            lat: data2.latitude,
+            lng: data2.longitude,
+            source: 'IP',
+            ip: data2.ip,
           });
+          return;
         }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setLocation({
-            city: 'Visitor Station',
-            country: 'Remote Node',
-            lat: 28.6139,
-            lng: 77.209,
-          });
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
+      } catch {
+        // Safe default
+        setLocation({
+          city: 'Remote Station',
+          country: 'Earth',
+          lat: 28.6139,
+          lng: 77.209,
+          source: 'DEFAULT',
+        });
+      }
+    }
   }, []);
 
-  // Radar Animation Loop
+  // Request High-Accuracy Browser GPS Geolocation
+  const requestGpsLocation = useCallback(() => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      fetchIpLocation();
+      return;
+    }
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        try {
+          // Free reverse geocoding to resolve exact city / locality from GPS coordinates
+          const geoRes = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+          );
+          const geoData = await geoRes.json();
+
+          const resolvedCity =
+            geoData.city ||
+            geoData.locality ||
+            geoData.principalSubdivision ||
+            'Local Station';
+          const resolvedCountry = geoData.countryName || 'India';
+
+          setLocation({
+            city: resolvedCity,
+            country: resolvedCountry,
+            lat,
+            lng,
+            source: 'GPS',
+          });
+        } catch {
+          // Keep GPS coordinates even if reverse lookup times out
+          setLocation({
+            city: 'GPS Station',
+            country: 'Earth',
+            lat,
+            lng,
+            source: 'GPS',
+          });
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      () => {
+        // User denied or GPS timed out -> use IP geolocation seamlessly
+        setIsLocating(false);
+        fetchIpLocation();
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 6000,
+        maximumAge: 60000,
+      }
+    );
+  }, [fetchIpLocation]);
+
+  useEffect(() => {
+    requestGpsLocation();
+  }, [requestGpsLocation]);
+
+  // Clean Minimalist Radar Canvas Render Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let animId: number;
     let angle = 0;
-    let pulseRadius = 0;
-    const pulses: { r: number; alpha: number }[] = [];
+    let packetT = 0;
 
     const render = () => {
       const width = canvas.width;
       const height = canvas.height;
       const centerX = width / 2;
       const centerY = height / 2;
-      const maxRadius = Math.min(centerX, centerY) - 16;
+      const radius = Math.min(centerX, centerY) - 14;
 
-      // Dark phosphor background fade
-      ctx.fillStyle = 'rgba(8, 12, 10, 0.25)';
+      // Deep clean dark canvas fade
+      ctx.fillStyle = 'rgba(10, 12, 14, 0.28)';
       ctx.fillRect(0, 0, width, height);
 
-      // Radar Concentric Range Rings
-      const rings = [0.25, 0.5, 0.75, 1.0];
-      rings.forEach((scale) => {
+      // 1. Concentric Range Rings (Minimal & Fine)
+      const ringScales = [0.33, 0.66, 1.0];
+      ringScales.forEach((s) => {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, maxRadius * scale, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * s, 0, Math.PI * 2);
         ctx.strokeStyle = isTransmitting
-          ? 'rgba(0, 255, 170, 0.6)'
-          : 'rgba(165, 169, 174, 0.3)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash(scale === 1.0 ? [] : [2, 4]);
+          ? 'rgba(0, 255, 170, 0.35)'
+          : 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = s === 1.0 ? 1.2 : 0.8;
+        if (s !== 1.0) ctx.setLineDash([2, 4]);
         ctx.stroke();
         ctx.setLineDash([]);
       });
 
-      // Crosshairs (Azimuth axes)
+      // 2. Subtle Crosshair Lines
       ctx.beginPath();
-      ctx.moveTo(centerX - maxRadius, centerY);
-      ctx.lineTo(centerX + maxRadius, centerY);
-      ctx.moveTo(centerX, centerY - maxRadius);
-      ctx.lineTo(centerX, centerY + maxRadius);
-      ctx.strokeStyle = 'rgba(95, 98, 102, 0.4)';
+      ctx.moveTo(centerX - radius, centerY);
+      ctx.lineTo(centerX + radius, centerY);
+      ctx.moveTo(centerX, centerY - radius);
+      ctx.lineTo(centerX, centerY + radius);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // 3. Station Position Coordinates
+      // Vadodara Target
+      const vOffsetX = ((VADODARA.lng - 70) / 40) * (radius * 0.45);
+      const vOffsetY = -((VADODARA.lat - 20) / 30) * (radius * 0.45);
+      const vadodaraX = Math.max(centerX - radius + 15, Math.min(centerX + radius - 15, centerX + vOffsetX));
+      const vadodaraY = Math.max(centerY - radius + 15, Math.min(centerY + radius - 15, centerY + vOffsetY));
+
+      // Visitor Origin
+      const visOffsetX = ((location.lng - 70) / 40) * (radius * 0.45);
+      const visOffsetY = -((location.lat - 20) / 30) * (radius * 0.45);
+      const visitorX = Math.max(centerX - radius + 15, Math.min(centerX + radius - 15, centerX + visOffsetX));
+      const visitorY = Math.max(centerY - radius + 15, Math.min(centerY + radius - 15, centerY + visOffsetY));
+
+      // 4. Subtle Dotted Baseline Vector between Visitor & Vadodara
+      ctx.beginPath();
+      ctx.moveTo(visitorX, visitorY);
+      ctx.lineTo(vadodaraX, vadodaraY);
+      ctx.strokeStyle = isTransmitting ? 'rgba(0, 255, 170, 0.6)' : 'rgba(0, 229, 255, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 5. Minimalist Sweeping Beam
+      const sweepSpeed = isTransmitting ? 0.07 : 0.022;
+      angle += shouldReduceMotion ? 0 : sweepSpeed;
+      if (angle >= Math.PI * 2) angle -= Math.PI * 2;
+
+      // Soft sweeping gradient
+      const segments = 12;
+      for (let i = 0; i < segments; i++) {
+        const segAngle = angle - (i * 0.025);
+        const alpha = (1 - i / segments) * (isTransmitting ? 0.35 : 0.12);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, segAngle - 0.025, segAngle);
+        ctx.fillStyle = isTransmitting
+          ? `rgba(0, 255, 170, ${alpha})`
+          : `rgba(0, 229, 255, ${alpha})`;
+        ctx.fill();
+      }
+
+      // Leading beam edge
+      const edgeX = centerX + Math.cos(angle) * radius;
+      const edgeY = centerY + Math.sin(angle) * radius;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(edgeX, edgeY);
+      ctx.strokeStyle = isTransmitting ? '#00ffaa' : 'rgba(0, 229, 255, 0.6)';
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Cardinal direction ticks & labels
-      ctx.fillStyle = isTransmitting ? '#00ffaa' : '#F2ECDD';
-      ctx.font = '10px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('N 000°', centerX, centerY - maxRadius + 8);
-      ctx.fillText('S 180°', centerX, centerY + maxRadius - 8);
-      ctx.fillText('E 090°', centerX + maxRadius - 20, centerY);
-      ctx.fillText('W 270°', centerX - maxRadius + 20, centerY);
-
-      // Vadodara Station Blip (Target: Nitin)
-      const vadodaraX = centerX + 20;
-      const vadodaraY = centerY - 16;
+      // 6. Vadodara Target Station (Pulsing Emerald Beacon)
       ctx.beginPath();
-      ctx.arc(vadodaraX, vadodaraY, 4, 0, Math.PI * 2);
+      ctx.arc(vadodaraX, vadodaraY, 3.5, 0, Math.PI * 2);
       ctx.fillStyle = '#00ffaa';
       ctx.shadowColor = '#00ffaa';
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Visitor Station Blip (Calculated from IP)
-      const normLat = (location.lat / 90) * 0.65;
-      const normLng = (location.lng / 180) * 0.65;
-      const visitorX = centerX + normLng * maxRadius;
-      const visitorY = centerY - normLat * maxRadius;
-
-      ctx.beginPath();
-      ctx.arc(visitorX, visitorY, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#F2ECDD';
-      ctx.shadowColor = '#F2ECDD';
       ctx.shadowBlur = 8;
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      // Smart Non-Merging Entity Callouts:
-      // Draw leader line for Nitin to Top-Right
+      // Faint pulse ring around Vadodara
+      const pulsePhase = (Date.now() / 900) % 1;
       ctx.beginPath();
-      ctx.moveTo(vadodaraX, vadodaraY);
-      ctx.lineTo(centerX + maxRadius - 28, centerY - maxRadius + 30);
-      ctx.strokeStyle = 'rgba(0, 255, 170, 0.4)';
-      ctx.setLineDash([2, 2]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = '#00ffaa';
-      ctx.font = 'bold 9px monospace';
-      ctx.textAlign = 'right';
-      ctx.fillText('STATION: VADODARA (IN)', centerX + maxRadius - 10, centerY - maxRadius + 30);
-
-      // Draw leader line for Visitor to Bottom-Left
-      ctx.beginPath();
-      ctx.moveTo(visitorX, visitorY);
-      ctx.lineTo(centerX - maxRadius + 28, centerY + maxRadius - 26);
-      ctx.strokeStyle = 'rgba(165, 169, 174, 0.45)';
-      ctx.setLineDash([2, 2]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = '#F2ECDD';
-      ctx.font = 'bold 9px monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText(`VISITOR: ${location.city.toUpperCase()}`, centerX - maxRadius + 10, centerY + maxRadius - 26);
-
-      // SWEEPING RADAR BEAM
-      const sweepSpeed = isTransmitting ? 0.08 : 0.025;
-      angle += shouldReduceMotion ? 0 : sweepSpeed;
-      if (angle >= Math.PI * 2) angle -= Math.PI * 2;
-
-      // Draw sweeping beam gradient wedge
-      const wedgeSegments = 16;
-      for (let i = 0; i < wedgeSegments; i++) {
-        const segAngle = angle - (i * 0.03);
-        const alpha = (1 - i / wedgeSegments) * (isTransmitting ? 0.45 : 0.22);
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, maxRadius, segAngle - 0.03, segAngle);
-        ctx.fillStyle = isTransmitting
-          ? `rgba(0, 255, 170, ${alpha})`
-          : `rgba(242, 236, 221, ${alpha * 0.75})`;
-        ctx.fill();
-      }
-
-      // Beam leading edge line
-      const lineX = centerX + Math.cos(angle) * maxRadius;
-      const lineY = centerY + Math.sin(angle) * maxRadius;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(lineX, lineY);
-      ctx.strokeStyle = isTransmitting ? '#ffffff' : '#F2ECDD';
-      ctx.lineWidth = 1.5;
+      ctx.arc(vadodaraX, vadodaraY, 3.5 + pulsePhase * 10, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0, 255, 170, ${1 - pulsePhase})`;
+      ctx.lineWidth = 0.8;
       ctx.stroke();
 
-      // 🌟 TRANSMISSION ANIMATION (When email is dispatched)
+      // 7. Visitor Origin Station (Clean Cyan Beacon)
+      ctx.beginPath();
+      ctx.arc(visitorX, visitorY, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // 8. Transmission Packet Signal Animation
       if (isTransmitting) {
-        // High frequency radio signal line connecting visitor to Vadodara
-        ctx.beginPath();
-        ctx.moveTo(visitorX, visitorY);
-        ctx.lineTo(vadodaraX, vadodaraY);
-        ctx.strokeStyle = '#00ffaa';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([4, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Shockwave rings expanding from transmitter
-        pulseRadius += 3.5;
-        if (pulseRadius > maxRadius) pulseRadius = 0;
+        packetT = (packetT + 0.04) % 1;
+        const curX = visitorX + (vadodaraX - visitorX) * packetT;
+        const curY = visitorY + (vadodaraY - visitorY) * packetT;
 
         ctx.beginPath();
-        ctx.arc(visitorX, visitorY, pulseRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 255, 170, ${Math.max(0, 1 - pulseRadius / maxRadius)})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, (pulseRadius * 1.3) % maxRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 229, 255, ${Math.max(0, 1 - (pulseRadius * 1.3) % maxRadius / maxRadius)})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+        ctx.arc(curX, curY, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#00ffaa';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      animId = requestAnimationFrame(render);
     };
-
-    // Initial clear
-    ctx.fillStyle = '#070b09';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     render();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
     };
   }, [location, isTransmitting, shouldReduceMotion]);
 
+  const distanceKm = calculateDistanceKm(
+    location.lat,
+    location.lng,
+    VADODARA.lat,
+    VADODARA.lng
+  );
+
   return (
-    <div className="w-full flex flex-col items-center border border-[var(--border-retro)] bg-black p-3 relative shadow-[inset_0_0_25px_rgba(0,0,0,0.85)]">
-      {/* Radar Monitor Title Bar */}
-      <div className="w-full flex items-center justify-between text-[11px] font-mono border-b border-[var(--border-retro)] pb-2 mb-2">
-        <div className="flex items-center gap-1.5">
-          <span
-            className={`w-2.5 h-2.5 rounded-full ${
-              isTransmitting ? 'bg-emerald-400 animate-ping' : 'bg-[var(--neutral-eggshell)] animate-pulse'
-            }`}
-          />
-          <strong className="text-[var(--text-main)] font-pixel text-xs">
-            {isTransmitting ? 'TRANSMITTING SIGNAL' : 'RADAR SCANNER • 360°'}
-          </strong>
+    <div className="w-full flex flex-col border border-[var(--border-retro)] bg-[var(--surface-window)] p-3 relative shadow-[var(--shadow-hard-sm)] font-mono text-xs">
+      {/* Sleek Minimalist Header */}
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-[var(--border-retro)] text-[11px]">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="font-bold text-[var(--text-main)] font-pixel text-xs">
+            RADAR_UPLINK
+          </span>
         </div>
-        <span className="text-emerald-400 font-bold text-[10px]">
-          {isTransmitting ? '[PACKET SENDING]' : 'CARRIER LOCK'}
-        </span>
+
+        <div className="flex items-center gap-2">
+          <span
+            className={`text-[9px] px-1.5 py-0.5 border font-bold ${
+              location.source === 'GPS'
+                ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'
+                : 'border-[var(--border-retro)] text-[var(--text-muted)]'
+            }`}
+          >
+            {isLocating ? 'LOCATING...' : location.source === 'GPS' ? '● GPS ACCURATE' : 'IP ESTIMATE'}
+          </span>
+          <button
+            type="button"
+            onClick={requestGpsLocation}
+            title="Calibrate exact location via browser GPS"
+            className="text-[9px] px-1.5 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-panel)] text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-[var(--accent-contrast)] transition-colors cursor-pointer"
+          >
+            REFRESH
+          </button>
+        </div>
       </div>
 
-      {/* Canvas Display */}
-      <div className="relative w-full aspect-square max-w-[280px] sm:max-w-[320px] flex items-center justify-center">
+      {/* Scope Canvas Display */}
+      <div className="relative w-full aspect-square max-w-[240px] sm:max-w-[270px] mx-auto flex items-center justify-center my-1">
         <canvas
           ref={canvasRef}
-          width={320}
-          height={320}
-          className="w-full h-full object-contain filter contrast-125"
+          width={280}
+          height={280}
+          className="w-full h-full object-contain rounded-full border border-[var(--border-retro)] bg-black"
         />
 
-        {/* Scanline CRT overlay */}
-        <div className="absolute inset-0 dither-pattern opacity-15 pointer-events-none" />
-
-        {/* Transmission Notification HUD */}
+        {/* Transmission Notification Overlay */}
         {isTransmitting && (
-          <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 bg-black/90 border-2 border-emerald-400 p-2 text-center text-emerald-300 font-mono text-xs shadow-[0_0_15px_rgba(16,185,129,0.6)] animate-pulse">
-            <div className="font-pixel text-sm text-emerald-400 mb-0.5">
-              ● TRANSMITTING PACKET
-            </div>
-            <div>UPLINK: ACTIVE • 1420.4 MHz</div>
-            <div className="text-[10px] text-white mt-0.5">
-              ROUTING TO kanojiyanitin870@gmail.com
-            </div>
+          <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 bg-black/90 border border-emerald-500 p-2 text-center text-emerald-400 font-mono text-[10px] shadow-[0_0_12px_rgba(16,185,129,0.5)] animate-pulse">
+            <span className="font-pixel text-xs block text-white">
+              ● TRANSMITTING UPLINK
+            </span>
+            <span>ROUTING TO VADODARA STATION</span>
           </div>
         )}
       </div>
 
-      {/* Radar Telemetry Information */}
-      <div className="w-full mt-2 pt-2 border-t border-[#2d2e33] grid grid-cols-2 gap-2 text-[10px] font-mono">
+      {/* Clean Minimalist Telemetry Grid */}
+      <div className="w-full mt-2 pt-2 border-t border-[var(--border-retro)] grid grid-cols-2 gap-2 text-[10px]">
         <div>
-          <span className="text-[#8b949e] block text-[9px]">ORIGIN (YOUR NODE):</span>
-          <strong className="text-white truncate block">
+          <span className="text-[var(--text-muted)] block text-[9px]">ORIGIN (YOU):</span>
+          <strong className="text-[var(--text-main)] truncate block">
             {location.city}, {location.country}
           </strong>
         </div>
         <div className="text-right">
-          <span className="text-[#8b949e] block text-[9px]">TARGET STATION:</span>
-          <strong className="text-emerald-400 block">Vadodara, India</strong>
+          <span className="text-[var(--text-muted)] block text-[9px]">TARGET:</span>
+          <strong className="text-emerald-600 dark:text-emerald-400 block truncate">
+            Vadodara, India
+          </strong>
         </div>
+      </div>
+
+      {/* Distance Status Strip */}
+      <div className="w-full mt-1.5 pt-1.5 border-t border-dashed border-[var(--border-retro)] flex items-center justify-between text-[9px] text-[var(--text-muted)]">
+        <span>VECTOR RANGE:</span>
+        <strong className="font-bold text-[var(--text-main)]">
+          {distanceKm === 0 ? 'SAME LOCAL NODE' : `${distanceKm.toLocaleString()} KM`}
+        </strong>
       </div>
     </div>
   );
 }
-
