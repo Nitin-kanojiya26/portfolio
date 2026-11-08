@@ -64,16 +64,24 @@ export default function Contact() {
     setTimeout(() => {
       setConsoleLog((prev) => [
         ...prev,
+        '> ✈ MESSAGE AIRPLANE LAUNCHED FROM USER PIN...',
+        '> IN-FLIGHT TRAJECTORY: HEADING TO VADODARA (HOST PIN)...',
+      ]);
+    }, 500);
+
+    setTimeout(() => {
+      setConsoleLog((prev) => [
+        ...prev,
+        '> ✈ AIRPLANE ARRIVED AT HOST PIN (NITIN @ VADODARA)',
         '> LAUNCHING GMAIL WEB COMPOSE DIRECTLY IN BROWSER...',
         '> PAYLOAD COPIED TO CLIPBOARD FOR SAFETY',
-        '> DESTINATION: kanojiyanitin870@gmail.com',
         '> STATUS: 200 OK — TAB LAUNCHED!',
       ]);
 
       // Open Gmail Web Compose in new tab (never fails on missing desktop apps)
       window.open(gmailUrl, '_blank', 'noopener,noreferrer');
       setIsExecuting(false);
-    }, 600);
+    }, 1600);
   };
 
   const copyEmail = () => {
