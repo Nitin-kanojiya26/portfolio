@@ -276,8 +276,9 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
   }, [fetchIpLocation]);
 
   useEffect(() => {
-    requestGpsLocation();
-  }, [requestGpsLocation]);
+    // Automatically detect location silently via IP - zero browser popups or permission prompts
+    fetchIpLocation();
+  }, [fetchIpLocation]);
 
   // Main Radar Canvas Loop
   useEffect(() => {
@@ -511,6 +512,8 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
             className={`text-[9px] px-1.5 py-0.5 border font-bold ${
               flightActive || isTransmitting
                 ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 animate-pulse'
+                : isLocating
+                ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 animate-pulse'
                 : location.source === 'GPS'
                 ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'
                 : 'border-[var(--border-retro)] text-[var(--text-muted)]'
@@ -518,6 +521,8 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
           >
             {flightActive || isTransmitting
               ? '✈ AIRPLANE DISPATCHED'
+              : isLocating
+              ? 'CALIBRATING GPS...'
               : location.source === 'GPS'
               ? '● GPS ACCURATE'
               : 'IP ESTIMATE'}
@@ -535,10 +540,11 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
           <button
             type="button"
             onClick={requestGpsLocation}
-            title="Calibrate exact location via browser GPS"
-            className="text-[9px] px-1.5 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-panel)] text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-[var(--accent-contrast)] transition-colors cursor-pointer"
+            disabled={isLocating}
+            title="Calibrate exact location via browser GPS (optional)"
+            className="text-[9px] px-1.5 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-panel)] text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-[var(--accent-contrast)] transition-colors cursor-pointer disabled:opacity-50"
           >
-            GPS
+            {isLocating ? 'LOCATING...' : 'GPS'}
           </button>
         </div>
       </div>
