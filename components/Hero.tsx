@@ -76,12 +76,12 @@ export default function Hero() {
           
           {/* Left Column: Big Interactive 3D Animated Retro Computer */}
           <div className="lg:col-span-6 w-full flex flex-col items-center justify-center order-1 lg:order-2">
-            <div className="w-full aspect-square max-w-[340px] sm:max-w-[420px] lg:max-w-[480px] border-2 border-[var(--border-retro)] bg-black p-2 relative shadow-[inset_0_0_25px_rgba(0,0,0,0.85)]">
+            <div className="w-full aspect-square max-w-[310px] sm:max-w-[420px] lg:max-w-[480px] border-2 border-[var(--border-retro)] bg-black p-1.5 sm:p-2 relative shadow-[inset_0_0_25px_rgba(0,0,0,0.85)]">
               {/* Scanline overlay for the monitor */}
               <div className="absolute inset-0 dither-pattern opacity-25 pointer-events-none" />
               
               {/* Header inside screen */}
-              <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[10px] font-pixel text-[var(--neutral-eggshell)] z-10 pointer-events-none">
+              <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 flex items-center justify-between text-[9px] sm:text-[10px] font-pixel text-[var(--neutral-eggshell)] z-10 pointer-events-none">
                 <span>3D VECTOR DISPLAY</span>
                 <span>MODEL: RETRO_PC_5150</span>
               </div>

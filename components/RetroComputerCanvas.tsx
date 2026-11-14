@@ -39,18 +39,22 @@ export default function RetroComputerCanvas() {
     let lastPointerX = 0;
     let lastPointerY = 0;
     let frameCount = 0;
+    let dpr = 1;
+    let cssWidth = 300;
+    let cssHeight = 300;
 
     // Handle high DPI crisp rendering & mobile viewport check
     const handleResize = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const width = parent.clientWidth;
-      const height = parent.clientHeight || width;
-      setIsMobile(width < 500 || window.innerWidth < 640);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      cssWidth = parent.clientWidth;
+      cssHeight = parent.clientHeight || cssWidth;
+      setIsMobile(cssWidth < 500 || window.innerWidth < 640);
+      canvas.width = Math.round(cssWidth * dpr);
+      canvas.height = Math.round(cssHeight * dpr);
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
     };
 
     handleResize();
@@ -169,7 +173,7 @@ export default function RetroComputerCanvas() {
       { from: 44, to: 45 }, { from: 45, to: 46 }, { from: 46, to: 47 }, { from: 47, to: 44 },
     ];
 
-    // Pointer events for interactive 3D rotation
+    // Pointer events for interactive 3D rotation (Touch & Mouse)
     const onPointerDown = (e: PointerEvent) => {
       pointerDown = true;
       lastPointerX = e.clientX;
@@ -177,16 +181,23 @@ export default function RetroComputerCanvas() {
       setIsInteracting(true);
       velocityY = 0;
       velocityX = 0;
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // pointer capture fallback
+      }
     };
 
     const onPointerMove = (e: PointerEvent) => {
       if (!pointerDown) {
-        // Subtle tilt on hover
-        const rect = canvas.getBoundingClientRect();
-        const nx = (e.clientX - rect.left) / rect.width - 0.5;
-        const ny = (e.clientY - rect.top) / rect.height - 0.5;
-        targetAngleY = nx * 0.7;
-        targetAngleX = ny * 0.35 + 0.15;
+        // Subtle tilt on mouse hover (desktop only)
+        if (e.pointerType === 'mouse') {
+          const rect = canvas.getBoundingClientRect();
+          const nx = (e.clientX - rect.left) / rect.width - 0.5;
+          const ny = (e.clientY - rect.top) / rect.height - 0.5;
+          targetAngleY = nx * 0.7;
+          targetAngleX = ny * 0.35 + 0.15;
+        }
         return;
       }
       const dx = e.clientX - lastPointerX;
@@ -194,21 +205,34 @@ export default function RetroComputerCanvas() {
       lastPointerX = e.clientX;
       lastPointerY = e.clientY;
       
-      velocityY = dx * 0.008;
-      velocityX = dy * 0.008;
+      const sensitivity = e.pointerType === 'touch' ? 0.012 : 0.008;
+      velocityY = dx * sensitivity;
+      velocityX = dy * sensitivity;
       targetAngleY += velocityY;
       targetAngleX += velocityX;
-      targetAngleX = Math.max(-0.5, Math.min(0.6, targetAngleX));
+      targetAngleX = Math.max(-0.45, Math.min(0.55, targetAngleX));
     };
 
-    const onPointerUp = () => {
+    const onPointerUp = (e?: PointerEvent) => {
       pointerDown = false;
       setIsInteracting(false);
+      if (e && canvas) {
+        try {
+          if (canvas.hasPointerCapture(e.pointerId)) {
+            canvas.releasePointerCapture(e.pointerId);
+          }
+        } catch {
+          // ignore
+        }
+      }
     };
 
     canvas.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
     window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
 
     // Render loop
     const render = () => {
@@ -230,15 +254,19 @@ export default function RetroComputerCanvas() {
       angleY += (targetAngleY - angleY) * 0.1;
       angleX += (targetAngleX - angleX) * 0.1;
 
-      const width = canvas.width / (window.devicePixelRatio || 1);
-      const height = canvas.height / (window.devicePixelRatio || 1);
-      const isMob = width < 500;
-      const cx = width / 2;
-      const cy = isMob ? height / 2 + 8 : height / 2 + 15;
-      const fov = isMob ? Math.min(width, height) * 0.88 : Math.min(width, height) * 0.95;
-      const cameraDist = 300;
+      // Clean viewport transform (Zero DPR mismatch, crisp across iOS/Android)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-      ctx.clearRect(0, 0, width, height);
+      const width = cssWidth;
+      const height = cssHeight;
+      const isMob = width < 500 || window.innerWidth < 640;
+      const cx = width / 2;
+      // On mobile, position slightly above center to balance top header and bottom touch label
+      const cy = isMob ? height * 0.47 : height * 0.51;
+      // Scale FOV so 3D hologram workstation fits without clipping on compact phone viewports
+      const fov = isMob ? Math.min(width, height) * 0.76 : Math.min(width, height) * 0.95;
+      const cameraDist = 300;
 
       // Trigonometry for 3D rotation
       const cosY = Math.cos(angleY);
@@ -248,11 +276,11 @@ export default function RetroComputerCanvas() {
 
       // 1. Draw Animated Retro Perspective Grid Floor
       ctx.save();
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.08)';
+      ctx.strokeStyle = isMob ? 'rgba(0, 229, 255, 0.12)' : 'rgba(0, 229, 255, 0.08)';
       ctx.lineWidth = 1;
       const gridY = 70; // Floor height
-      const gridExtent = 220;
-      const gridStep = 44;
+      const gridExtent = isMob ? 140 : 220;
+      const gridStep = isMob ? 35 : 44;
 
       for (let gx = -gridExtent; gx <= gridExtent; gx += gridStep) {
         const x1 = gx * cosY + (-gridExtent) * sinY;
@@ -299,10 +327,10 @@ export default function RetroComputerCanvas() {
       }
 
       // 3. Draw Computer Wireframe Edges (Warm Retro Eggshell Phosphor)
-      ctx.lineWidth = 1.4;
+      ctx.lineWidth = isMob ? 1.5 : 1.4;
       ctx.strokeStyle = '#F2ECDD'; // Eggshell warm retro wireframe
-      ctx.shadowColor = '#F2ECDD';
-      ctx.shadowBlur = 4;
+      ctx.shadowColor = '#00e5ff'; // Hologram cyan phosphor bloom
+      ctx.shadowBlur = isMob ? 3 : 4;
 
       ctx.beginPath();
       for (let i = 0; i < edges.length; i++) {
@@ -386,8 +414,8 @@ export default function RetroComputerCanvas() {
           const keyX = topX + (botX - topX) * activeLetter.v;
           const keyY = topY + (botY - topY) * activeLetter.v;
 
-          const keyW = Math.max(8, Math.min(18, Math.abs(pKeyR.x - pKeyL.x) * 0.09));
-          const keyH = Math.max(5, Math.min(12, Math.abs(pKeyBL.y - pKeyL.y) * 0.18));
+          const keyW = Math.max(isMob ? 10 : 8, Math.min(18, Math.abs(pKeyR.x - pKeyL.x) * 0.09));
+          const keyH = Math.max(isMob ? 6 : 5, Math.min(12, Math.abs(pKeyBL.y - pKeyL.y) * 0.18));
 
           ctx.save();
           ctx.shadowColor = activeLetter.color;
@@ -399,7 +427,7 @@ export default function RetroComputerCanvas() {
 
           // Letter stamped on keycap
           ctx.fillStyle = '#000000';
-          ctx.font = `bold ${Math.max(6, Math.round(keyH * 0.75))}px monospace`;
+          ctx.font = `bold ${Math.max(isMob ? 7 : 6, Math.round(keyH * 0.8))}px monospace`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(activeLetter.char.toUpperCase(), keyX, keyY);
@@ -409,7 +437,7 @@ export default function RetroComputerCanvas() {
             const pScreenBottomX = (projected[14].x + projected[15].x) / 2;
             const pScreenBottomY = (projected[14].y + projected[15].y) / 2;
             ctx.strokeStyle = activeLetter.color;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = isMob ? 1.2 : 1;
             ctx.shadowBlur = 6;
             ctx.setLineDash([2, 3]);
             ctx.beginPath();
@@ -431,14 +459,14 @@ export default function RetroComputerCanvas() {
       const sWidth = Math.abs(pScreenTR.x - pScreenTL.x);
       const sHeight = Math.abs(pScreenBL.y - pScreenTL.y);
 
-      if (sWidth > 26 && sHeight > 18) {
+      if (sWidth > 22 && sHeight > 16) {
         ctx.save();
 
         const midX = (pScreenTL.x + pScreenTR.x + pScreenBR.x + pScreenBL.x) / 4;
         const midY = (pScreenTL.y + pScreenTR.y + pScreenBR.y + pScreenBL.y) / 4;
 
-        const fontSize = Math.max(13, Math.min(24, sWidth * 0.26));
-        ctx.font = `italic bold ${Math.round(fontSize)}px "Brush Script MT", "Comic Sans MS", "Caveat", cursive, sans-serif`;
+        const fontSize = Math.max(isMob ? 11 : 13, Math.min(24, sWidth * 0.25));
+        ctx.font = `italic 700 ${Math.round(fontSize)}px "Courier New", Courier, monospace, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -475,12 +503,13 @@ export default function RetroComputerCanvas() {
 
         // Telemetry prompt below hello
         ctx.shadowBlur = 0;
-        ctx.font = `${Math.max(7, Math.min(9, sWidth * 0.09))}px monospace`;
-        ctx.fillStyle = activeKeyIdx >= 0 ? '#00e5ff' : '#A5A9AE';
+        const promptFontSize = Math.max(isMob ? 7.5 : 8, Math.min(10, sWidth * 0.1));
+        ctx.font = `600 ${promptFontSize}px monospace`;
+        ctx.fillStyle = activeKeyIdx >= 0 ? '#00e5ff' : 'rgba(242, 236, 221, 0.8)';
         const statusPrompt = activeKeyIdx >= 0
           ? `> KEY: [${helloLetters[activeKeyIdx].char.toUpperCase()}]`
           : (Math.floor(frameCount / 25) % 2 === 0 ? '> NITIN_OS █' : '> NITIN_OS  ');
-        ctx.fillText(statusPrompt, midX, midY + fontSize * 0.82);
+        ctx.fillText(statusPrompt, midX, midY + fontSize * 0.85);
 
         ctx.restore();
       }
@@ -518,8 +547,11 @@ export default function RetroComputerCanvas() {
       document.removeEventListener('visibilitychange', handleVisibility);
       observer.disconnect();
       canvas.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
     };
   }, [shouldReduceMotion]);
 
@@ -531,13 +563,13 @@ export default function RetroComputerCanvas() {
       <canvas
         ref={canvasRef}
         style={{ touchAction: 'pan-y' }}
-        className="w-full h-full max-h-[460px] aspect-square object-contain"
+        className="w-full h-full max-h-[460px] aspect-square object-contain block"
         aria-label="Interactive 3D Retro Computer Wireframe Model"
       />
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-black/90 border border-[#5F6266] text-[#F2ECDD] text-[9px] sm:text-[10px] font-mono tracking-wider whitespace-nowrap pointer-events-none shadow-[0_0_10px_rgba(0,0,0,0.8)]">
+      <div className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 sm:px-2.5 sm:py-1 bg-black/90 border border-[#5F6266] text-[#F2ECDD] text-[8.5px] sm:text-[10px] font-mono tracking-wider whitespace-nowrap pointer-events-none shadow-[0_0_10px_rgba(0,0,0,0.8)] z-10">
         {isInteracting
           ? 'ROTATING 3D MODEL'
-          : (isMobile ? 'TOUCH TO ROTATE' : 'DRAG TO ROTATE 3D WORKSTATION')}
+          : (isMobile ? 'DRAG TO ROTATE' : 'DRAG TO ROTATE 3D WORKSTATION')}
       </div>
     </div>
   );
