@@ -27,10 +27,10 @@
   --accent-glow: rgba(0, 68, 204, 0.15);
   --grid-line: rgba(0, 0, 0, 0.04);
 
-  /* Muted Forest-Sage Subtle Secondary Accent */
-  --accent-quiet: #789283;
-  --accent-quiet-text: #465E52;
-  --accent-quiet-bg: #E8EFEA;
+  /* Muted Sage Subtle Secondary Accent */
+  --accent-quiet: #7FA38A;
+  --accent-quiet-text: #3F6B4F;
+  --accent-quiet-bg: #E6EEE8;
 }
 
 [data-theme="dark"],
@@ -62,10 +62,10 @@
   --accent-glow: rgba(242, 236, 221, 0.2);
   --grid-line: rgba(255, 255, 255, 0.025);
 
-  /* Muted Forest-Sage Subtle Secondary Accent */
-  --accent-quiet: #8FA699;
-  --accent-quiet-text: #96ACA0;
-  --accent-quiet-bg: #161D19;
+  /* Muted Sage Subtle Secondary Accent */
+  --accent-quiet: #8FB89B;
+  --accent-quiet-text: #8FB89B;
+  --accent-quiet-bg: #1A211C;
 }
 
 html {
