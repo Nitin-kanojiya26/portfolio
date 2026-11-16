@@ -34,7 +34,7 @@ export default function About() {
           </div>
 
           <p className="text-xs sm:text-sm text-[var(--text-muted)] font-mono max-w-md">
-            Backend Developer | AI Engineering • Computer Engineering student at Dharmsinh Desai University.
+            <span className="font-bold text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)]">Backend Developer | AI Engineering</span> • Computer Engineering student at Dharmsinh Desai University.
           </p>
         </div>
 
@@ -45,8 +45,8 @@ export default function About() {
           <div className="lg:col-span-8 flex flex-col gap-4">
             
             {/* Core Resume Summary Box */}
-            <div className="p-4 sm:p-5 border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] shadow-[var(--shadow-hard-sm)]">
-              <span className="text-xs font-mono text-[var(--accent-color)] uppercase tracking-wider block mb-1.5 font-bold">
+            <div className="p-4 sm:p-5 border-2 border-[var(--accent-quiet)]/60 bg-[var(--accent-quiet-bg)]/25 shadow-[var(--shadow-hard-sm)]">
+              <span className="text-xs font-mono text-[var(--accent-quiet-text)] uppercase tracking-wider block mb-1.5 font-bold">
                 SUMMARY
               </span>
               <p className="text-xs sm:text-sm font-sans text-[var(--text-main)] leading-relaxed">
@@ -56,7 +56,7 @@ export default function About() {
 
             {/* Factual Skill Focus */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs sm:text-sm text-[var(--text-muted)] font-sans leading-relaxed">
-              <div className="p-3.5 border border-[var(--border-retro)] bg-[var(--surface-window)]">
+              <div className="p-3.5 border border-[var(--border-retro)] bg-[var(--surface-window)] hover:border-[var(--accent-quiet)] transition-colors">
                 <strong className="text-[var(--text-main)] font-mono block mb-1 text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <Server size={14} className="text-[var(--accent-color)]" />
                   Backend &amp; Databases
@@ -66,7 +66,7 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="p-3.5 border border-[var(--border-retro)] bg-[var(--surface-window)]">
+              <div className="p-3.5 border border-[var(--border-retro)] bg-[var(--surface-window)] hover:border-[var(--accent-quiet)] transition-colors">
                 <strong className="text-[var(--text-main)] font-mono block mb-1 text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <Code2 size={14} className="text-emerald-400" />
                   CS Fundamentals &amp; DSA
@@ -79,7 +79,7 @@ export default function About() {
 
             {/* 2 Core Metric Gauges (Core Program & Real DSA Count) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="border border-[var(--border-retro)] bg-[var(--surface-panel)] p-3">
+              <div className="border border-[var(--border-retro)] bg-[var(--surface-panel)] p-3 hover:border-[var(--accent-quiet)] transition-colors">
                 <div className="flex justify-between items-center text-xs font-mono mb-1.5">
                   <span className="text-[var(--text-muted)]">CORE PROGRAM</span>
                   <strong className="text-emerald-600 dark:text-emerald-400 font-pixel text-sm">B.TECH CE</strong>
@@ -96,7 +96,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="border border-[var(--border-retro)] bg-[var(--surface-panel)] p-3">
+              <div className="border border-[var(--border-retro)] bg-[var(--surface-panel)] p-3 hover:border-[var(--accent-quiet)] transition-colors">
                 <div className="flex justify-between items-center text-xs font-mono mb-1.5">
                   <span className="text-[var(--text-muted)]">DSA PROBLEMS</span>
                   <strong className="text-blue-600 dark:text-blue-400 font-pixel text-sm font-bold">895+ SOLVED</strong>
@@ -144,7 +144,7 @@ export default function About() {
               {/* Photo Footer Metadata */}
               <div className="mt-2 text-center text-[10px] font-mono text-[var(--text-muted)] border-t border-[var(--border-retro)] pt-1.5 flex justify-between items-center">
                 <strong className="text-[var(--text-main)] font-pixel text-xs">NITIN KANOJIYA</strong>
-                <span className="text-[var(--accent-color)] font-bold text-[9px]">ENGINEER</span>
+                <span className="text-[var(--accent-quiet-text)] bg-[var(--accent-quiet-bg)] px-2 py-0.5 border border-[var(--accent-quiet)]/60 font-bold text-[9px] font-mono">ENGINEER</span>
               </div>
             </div>
           </div>

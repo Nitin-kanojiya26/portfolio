@@ -101,11 +101,11 @@ export default function Hero() {
               </h1>
 
               {/* Animated Typewriter Role Prompt */}
-              <div className="flex items-center text-sm sm:text-xl md:text-2xl font-mono text-[var(--accent-color)] font-bold mt-1">
-                <span className="text-[var(--text-muted)] mr-2">&gt;</span>
+              <div className="flex items-center text-sm sm:text-xl md:text-2xl font-mono text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold mt-1">
+                <span className="text-[var(--accent-quiet-text)]/70 dark:text-[var(--accent-quiet)]/60 mr-2">&gt;</span>
                 <span>{displayedTagline}</span>
                 <span
-                  className={`inline-block w-2.5 h-5 bg-[var(--accent-color)] ml-1 ${
+                  className={`inline-block w-2.5 h-5 bg-[var(--accent-quiet-text)] dark:bg-[var(--accent-quiet)] ml-1 ${
                     cursorVisible ? 'opacity-100' : 'opacity-0'
                   }`}
                   aria-hidden="true"
@@ -114,21 +114,21 @@ export default function Hero() {
             </div>
 
             {/* Narrative Bio - Concise & ATS Friendly */}
-            <p className="text-[var(--text-muted)] text-xs sm:text-sm md:text-base leading-relaxed font-sans font-normal border-l-2 border-[var(--border-retro)] pl-3 sm:pl-4 my-1 max-w-xl">
+            <p className="text-[var(--text-muted)] text-xs sm:text-sm md:text-base leading-relaxed font-sans font-normal border-l-2 border-[var(--accent-quiet)] pl-3 sm:pl-4 my-1 max-w-xl">
               <strong>B.Tech Computer Engineering</strong> student at <strong>Dharmsinh Desai University</strong> with strong foundations in Data Structures, Algorithms, backend architecture, and full-stack software development.
             </p>
 
             {/* Quick Specs Metric Ribbon (Clean & Verified) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full text-[11px] sm:text-xs font-mono">
-              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)] hover:border-[var(--accent-quiet)] transition-colors">
                 <span className="text-[var(--text-muted)] block text-[9px]">DEGREE</span>
                 <strong className="text-[var(--text-main)]">B.Tech Comp Engg</strong>
               </div>
-              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)] hover:border-[var(--accent-quiet)] transition-colors">
                 <span className="text-[var(--text-muted)] block text-[9px]">INSTITUTION</span>
                 <strong className="text-[var(--text-main)]">DDU Nadiad</strong>
               </div>
-              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)]">
+              <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-titlebar)] hover:border-[var(--accent-quiet)] transition-colors">
                 <span className="text-[var(--text-muted)] block text-[9px]">LOCATION</span>
                 <strong className="text-[var(--text-main)]">Vadodara, IN</strong>
               </div>

@@ -240,14 +240,17 @@ export default function Projects() {
                 key={p.id}
                 type="button"
                 onClick={() => setActiveProjectIndex(idx)}
-                className={`retro-btn p-3.5 sm:p-4 text-left flex flex-col justify-between border-2 transition-all cursor-pointer min-h-[90px] sm:min-h-[105px] ${
+                className={`retro-btn p-3.5 sm:p-4 text-left flex flex-col justify-between border-2 transition-all cursor-pointer min-h-[90px] sm:min-h-[105px] relative group ${
                   isActive
                     ? 'border-[var(--accent-color)] bg-[var(--surface-window)] shadow-[var(--shadow-hard)] ring-2 ring-[var(--accent-color)]/30 -translate-y-1'
-                    : 'border-[var(--border-retro)] bg-[var(--surface-panel)] opacity-85 hover:opacity-100 hover:border-[var(--border-highlight)]'
+                    : 'border-[var(--border-retro)] bg-[var(--surface-panel)] opacity-85 hover:opacity-100 hover:border-[var(--accent-quiet)]'
                 }`}
               >
+                {/* Subtle Sage Corner Accent on Hover */}
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 border-t border-r border-transparent group-hover:border-[var(--accent-quiet)] transition-colors pointer-events-none" />
+
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-[var(--text-muted)] font-bold">
+                  <span className="text-xs font-mono text-[var(--accent-quiet-text)] font-bold">
                     [0{idx + 1}]
                   </span>
                   {p.isLive ? (
@@ -256,7 +259,7 @@ export default function Projects() {
                       LIVE
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono text-[var(--text-muted)] border border-[var(--border-retro)] bg-[var(--surface-titlebar)] px-1.5 py-0.5">
+                    <span className="text-[10px] font-mono border border-[var(--accent-quiet)]/50 bg-[var(--accent-quiet-bg)]/40 text-[var(--accent-quiet-text)] px-1.5 py-0.5 font-bold">
                       REPO
                     </span>
                   )}
@@ -422,8 +425,8 @@ export default function Projects() {
               </h3>
 
               {/* 5-Second Comprehension Line */}
-              <div className="p-4 border-l-4 border-[var(--accent-color)] bg-[var(--surface-panel)] text-sm sm:text-base font-sans text-[var(--text-main)] mb-6 leading-relaxed">
-                <strong className="font-mono text-xs text-[var(--accent-color)] uppercase tracking-wider block mb-1 font-bold">
+              <div className="p-4 border-l-4 border-[var(--accent-quiet)] bg-[var(--accent-quiet-bg)]/35 text-sm sm:text-base font-sans text-[var(--text-main)] mb-6 leading-relaxed">
+                <strong className="font-mono text-xs text-[var(--accent-quiet-text)] uppercase tracking-wider block mb-1 font-bold">
                   EXECUTIVE SUMMARY
                 </strong>
                 {activeProject.oneLiner}
@@ -438,7 +441,7 @@ export default function Projects() {
                   {activeProject.tech.map((t, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 text-xs font-mono border border-[var(--border-retro)] bg-[var(--surface-panel)] text-[var(--text-main)]"
+                      className="px-3 py-1 text-xs font-mono border border-[var(--accent-quiet)]/50 bg-[var(--accent-quiet-bg)]/30 text-[var(--accent-quiet-text)] font-medium hover:border-[var(--accent-quiet)] hover:bg-[var(--accent-quiet-bg)]/60 transition-colors"
                     >
                       {t}
                     </span>

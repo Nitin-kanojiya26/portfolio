@@ -24,8 +24,22 @@ export default function Home() {
         <Hero />
         <div id="main-content">
           <About />
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-center gap-3 select-none pointer-events-none" aria-hidden="true">
+            <div className="flex-1 h-px bg-[var(--accent-quiet)]/40" />
+            <span className="text-[9px] font-mono font-bold text-[var(--accent-quiet-text)] bg-[var(--accent-quiet-bg)] border border-[var(--accent-quiet)]/50 px-2 py-0.5 tracking-widest shadow-xs">
+              SECTION_BREAK // 0x2A
+            </span>
+            <div className="flex-1 h-px bg-[var(--accent-quiet)]/40" />
+          </div>
           <ResumeDossier />
           <Projects />
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-center gap-3 select-none pointer-events-none" aria-hidden="true">
+            <div className="flex-1 h-px bg-[var(--accent-quiet)]/40" />
+            <span className="text-[9px] font-mono font-bold text-[var(--accent-quiet-text)] bg-[var(--accent-quiet-bg)] border border-[var(--accent-quiet)]/50 px-2 py-0.5 tracking-widest shadow-xs">
+              MODULE_INDEX // 0x3B
+            </span>
+            <div className="flex-1 h-px bg-[var(--accent-quiet)]/40" />
+          </div>
           <Skills />
           <Contact />
         </div>

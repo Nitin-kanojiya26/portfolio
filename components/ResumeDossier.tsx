@@ -29,7 +29,7 @@ export default function ResumeDossier() {
             <h2 className="text-3xl sm:text-5xl font-pixel font-bold text-[var(--text-main)]">
               NITIN KANOJIYA
             </h2>
-            <p className="text-xs sm:text-sm font-mono text-emerald-600 dark:text-emerald-400 mt-1 font-bold">
+            <p className="text-xs sm:text-sm font-mono text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] mt-1 font-bold">
               Backend Developer | AI Engineering
             </p>
           </div>
@@ -82,11 +82,14 @@ export default function ResumeDossier() {
             </div>
           </div>
 
-          <div className="p-3 border border-[var(--border-retro)] bg-[var(--surface-panel)] flex items-center gap-2.5">
-            <GraduationCap size={14} className="text-[var(--accent-color)] shrink-0" />
+          <div className="p-3 border-2 border-[var(--accent-quiet)]/70 bg-[var(--accent-quiet-bg)]/40 flex items-center gap-2.5 shadow-[var(--shadow-hard-sm)] transition-all">
+            <GraduationCap size={16} className="text-[var(--accent-quiet-text)] shrink-0" />
             <div>
-              <span className="text-[9px] text-[var(--text-muted)] block">AVAILABILITY</span>
-              <strong className="text-emerald-600 dark:text-emerald-400">Open to Opportunities</strong>
+              <span className="text-[9px] text-[var(--accent-quiet-text)] flex items-center gap-1.5 font-bold uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-quiet)] inline-block animate-pulse" />
+                AVAILABILITY
+              </span>
+              <strong className="text-[var(--accent-quiet-text)] font-pixel text-xs sm:text-sm block">Available for Opportunities</strong>
             </div>
           </div>
         </div>

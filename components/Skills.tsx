@@ -131,8 +131,8 @@ export default function Skills() {
                   onClick={() => setActiveCategory(idx)}
                   className={`px-5 py-3 font-pixel text-xs sm:text-sm whitespace-nowrap border-t-2 border-l border-r border-[var(--border-retro)] transition-all cursor-pointer font-bold ${
                     isActive
-                      ? 'bg-[var(--surface-window)] text-[var(--accent-color)] border-t-[var(--accent-color)] border-b-2 border-b-[var(--surface-window)] -mb-px z-10 shadow-[var(--shadow-hard-sm)]'
-                      : 'bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--surface-titlebar)]'
+                      ? 'bg-[var(--surface-window)] text-[var(--accent-quiet-text)] border-t-[var(--accent-quiet)] border-b-2 border-b-[var(--surface-window)] -mb-px z-10 shadow-[var(--shadow-hard-sm)]'
+                      : 'bg-[var(--surface-panel)] text-[var(--text-muted)] hover:text-[var(--accent-quiet-text)] hover:border-t-[var(--accent-quiet)] hover:bg-[var(--surface-titlebar)]'
                   }`}
                 >
                   [{item.code}]
@@ -142,11 +142,11 @@ export default function Skills() {
           </div>
 
           {/* Category Description Banner */}
-          <div className="p-4 sm:p-5 border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] flex items-start gap-3 shadow-[var(--shadow-hard-sm)]">
-            <span className="text-[var(--accent-color)] font-mono text-lg">&gt;</span>
-            <p className="text-xs sm:text-sm font-mono text-[var(--text-muted)] leading-relaxed">
-              <strong className="text-[var(--text-main)] uppercase tracking-wider text-sm">{currentCategory.category}: </strong>
-              {currentCategory.description}
+          <div className="p-4 sm:p-5 border-2 border-[var(--accent-quiet)]/60 bg-[var(--accent-quiet-bg)]/35 flex items-start gap-3 shadow-[var(--shadow-hard-sm)]">
+            <span className="text-[var(--accent-quiet-text)] font-mono text-lg font-bold select-none">&gt;</span>
+            <p className="text-xs sm:text-sm font-mono text-[var(--text-main)] leading-relaxed">
+              <strong className="text-[var(--accent-quiet-text)] uppercase tracking-wider text-sm font-bold">{currentCategory.category}: </strong>
+              <span className="text-[var(--text-muted)]">{currentCategory.description}</span>
             </p>
           </div>
 
@@ -155,10 +155,10 @@ export default function Skills() {
             {currentCategory.logos.map((skill, i) => (
               <div
                 key={i}
-                className="retro-btn p-4 flex flex-col justify-between border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] hover:border-[var(--accent-color)] transition-all group min-h-[90px]"
+                className="retro-btn p-4 flex flex-col justify-between border-2 border-[var(--border-retro)] bg-[var(--surface-panel)] hover:border-[var(--accent-quiet)] hover:bg-[var(--accent-quiet-bg)]/20 transition-all group min-h-[90px]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-none border border-[var(--border-retro)] bg-[var(--surface-window)] flex items-center justify-center p-2 relative shrink-0">
+                  <div className="w-10 h-10 rounded-none border border-[var(--border-retro)] bg-[var(--surface-window)] flex items-center justify-center p-2 relative shrink-0 group-hover:border-[var(--accent-quiet)] transition-colors">
                     {skill.src ? (
                       <Image
                         src={skill.src}
@@ -176,7 +176,7 @@ export default function Skills() {
                       {skill.name}
                     </span>
                     {skill.level && (
-                      <span className="text-[10px] font-mono text-[var(--text-muted)] group-hover:text-[var(--text-main)]">
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] group-hover:text-[var(--accent-quiet-text)] transition-colors">
                         {skill.level}
                       </span>
                     )}

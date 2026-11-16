@@ -62,9 +62,9 @@ export default function RetroMenuBar() {
         <div className="flex items-center gap-3 sm:gap-6 h-full">
           <a
             href="#home"
-            className="flex items-center gap-2 px-2.5 py-1 hover:bg-[var(--text-main)] hover:text-[var(--bg-canvas)] transition-colors font-bold text-[var(--text-main)] border border-transparent hover:border-[var(--border-retro)]"
+            className="flex items-center gap-2 px-2.5 py-1 hover:bg-[var(--accent-quiet-bg)]/40 hover:text-[var(--accent-quiet-text)] transition-colors font-bold text-[var(--text-main)] border border-transparent hover:border-[var(--accent-quiet)]"
           >
-            <span className="text-[var(--accent-color)] font-bold text-sm">■</span>
+            <span className="text-[var(--accent-quiet)] font-bold text-sm">■</span>
             <span className="tracking-widest text-sm font-bold">NITIN</span>
           </a>
 
@@ -76,12 +76,15 @@ export default function RetroMenuBar() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className={`px-3 py-1 transition-all tracking-wider font-bold text-xs border ${
+                  className={`px-3 py-1 transition-all tracking-wider font-bold text-xs border relative ${
                     isCurrent
-                      ? 'bg-[var(--text-main)] text-[var(--bg-canvas)] border-[var(--border-retro)] shadow-[0_0_8px_var(--accent-glow)]'
-                      : 'border-transparent hover:border-[var(--border-retro)] hover:bg-[var(--text-main)] hover:text-[var(--bg-canvas)]'
+                      ? 'bg-[var(--accent-quiet-bg)] text-[var(--accent-quiet-text)] border-[var(--accent-quiet)] shadow-[var(--shadow-hard-sm)]'
+                      : 'border-transparent text-[var(--text-main)] hover:border-[var(--accent-quiet)] hover:text-[var(--accent-quiet-text)] hover:bg-[var(--accent-quiet-bg)]/25'
                   }`}
                 >
+                  {isCurrent && (
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[var(--accent-quiet)]" />
+                  )}
                   {link.label}
                 </a>
               );

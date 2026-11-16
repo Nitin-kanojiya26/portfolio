@@ -11,7 +11,10 @@ const config: Config = {
       colors: {
         background: '#0a0a0a',
         accent: '#3b82f6', // Electric Blue
-        accentGlow: 'rgba(59, 130, 246, 0.5)'
+        accentGlow: 'rgba(59, 130, 246, 0.5)',
+        accentQuiet: 'var(--accent-quiet)',
+        accentQuietText: 'var(--accent-quiet-text)',
+        accentQuietBg: 'var(--accent-quiet-bg)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

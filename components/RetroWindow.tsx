@@ -41,17 +41,17 @@ export default function RetroWindow({
           : ''
       }`}
     >
-      {/* Decorative Technical Corner Crosshairs */}
-      <span className="absolute top-1.5 left-1.5 text-[9px] font-mono text-[var(--border-highlight)] select-none pointer-events-none z-20">
+      {/* Decorative Technical Corner Crosshairs (Muted Sage Drafting Marks) */}
+      <span className="absolute top-1.5 left-1.5 text-[9px] font-mono text-[var(--accent-quiet)] opacity-65 select-none pointer-events-none z-20">
         +
       </span>
-      <span className="absolute top-1.5 right-1.5 text-[9px] font-mono text-[var(--border-highlight)] select-none pointer-events-none z-20">
+      <span className="absolute top-1.5 right-1.5 text-[9px] font-mono text-[var(--accent-quiet)] opacity-65 select-none pointer-events-none z-20">
         +
       </span>
-      <span className="absolute bottom-1.5 left-1.5 text-[9px] font-mono text-[var(--border-highlight)] select-none pointer-events-none z-20">
+      <span className="absolute bottom-1.5 left-1.5 text-[9px] font-mono text-[var(--accent-quiet)] opacity-65 select-none pointer-events-none z-20">
         +
       </span>
-      <span className="absolute bottom-1.5 right-1.5 text-[9px] font-mono text-[var(--border-highlight)] select-none pointer-events-none z-20">
+      <span className="absolute bottom-1.5 right-1.5 text-[9px] font-mono text-[var(--accent-quiet)] opacity-65 select-none pointer-events-none z-20">
         +
       </span>
 
