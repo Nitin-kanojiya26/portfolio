@@ -82,11 +82,11 @@ export default function About() {
               <div className="border border-[var(--border-retro)] bg-[var(--surface-panel)] p-3 hover:border-[var(--accent-quiet)] transition-colors">
                 <div className="flex justify-between items-center text-xs font-mono mb-1.5">
                   <span className="text-[var(--text-muted)]">CORE PROGRAM</span>
-                  <strong className="text-emerald-600 dark:text-emerald-400 font-pixel text-sm">B.TECH CE</strong>
+                  <strong className="text-[var(--accent-quiet-text)] font-pixel text-sm">B.TECH CE</strong>
                 </div>
                 <div className="w-full bg-[var(--surface-titlebar)] border border-[var(--border-retro)] h-2.5 p-0.5">
                   <div
-                    className="bg-emerald-500 h-full transition-all duration-500"
+                    className="bg-[var(--accent-quiet)] h-full transition-all duration-500"
                     style={{ width: `${academic.pct}%` }}
                   />
                 </div>

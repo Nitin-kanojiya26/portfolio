@@ -134,12 +134,12 @@ export default function ResumeDossier() {
                 </div>
                 <div className="w-full bg-[var(--surface-titlebar)] border border-[var(--border-retro)] h-2.5 p-0.5">
                   <div
-                    className="bg-emerald-500 h-full transition-all duration-500"
+                    className="bg-[var(--accent-quiet)] h-full transition-all duration-500"
                     style={{ width: `${academic.pct}%` }}
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between text-[11px] font-mono text-[var(--text-muted)]">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">CGPA: 8.6 / 10.0 (through Semester 4)</span>
+                  <span className="text-[var(--accent-quiet-text)] font-bold">CGPA: 8.6 / 10.0 (through Semester 4)</span>
                   <span>COURSEWORK: DSA, DBMS, OS, Networks, OOP</span>
                 </div>
               </div>
@@ -262,7 +262,7 @@ export default function ResumeDossier() {
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
                     {['Data Structures & Algorithms', 'DBMS'].map((s) => (
-                      <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-emerald-600 dark:text-emerald-400 font-bold">
+                      <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--accent-quiet-text)] font-bold">
                         {s}
                       </span>
                     ))}

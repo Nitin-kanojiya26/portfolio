@@ -589,7 +589,7 @@ export default function RetroRadar({ isTransmitting = false }: RetroRadarProps) 
             <span className="w-1.5 h-1.5 rounded-full bg-[#00ffaa]" />
             HOST PIN (NITIN):
           </span>
-          <strong className="text-emerald-600 dark:text-emerald-400 block truncate">
+          <strong className="text-[var(--accent-quiet-text)] block truncate">
             Vadodara, India
           </strong>
         </div>

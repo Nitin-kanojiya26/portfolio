@@ -101,11 +101,11 @@ export default function Hero() {
               </h1>
 
               {/* Animated Typewriter Role Prompt */}
-              <div className="flex items-center text-sm sm:text-xl md:text-2xl font-mono text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold mt-1">
-                <span className="text-[var(--accent-quiet-text)]/70 dark:text-[var(--accent-quiet)]/60 mr-2">&gt;</span>
+              <div className="flex items-center text-sm sm:text-xl md:text-2xl font-mono text-[var(--accent-quiet-text)] font-bold mt-1">
+                <span className="text-[var(--accent-quiet-text)]/70 mr-2">&gt;</span>
                 <span>{displayedTagline}</span>
                 <span
-                  className={`inline-block w-2.5 h-5 bg-[var(--accent-quiet-text)] dark:bg-[var(--accent-quiet)] ml-1 ${
+                  className={`inline-block w-2.5 h-5 bg-[var(--accent-quiet-text)] ml-1 ${
                     cursorVisible ? 'opacity-100' : 'opacity-0'
                   }`}
                   aria-hidden="true"

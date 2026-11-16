@@ -478,7 +478,7 @@ export default function Projects() {
                     {activeProject.hardProblem}
                   </p>
                   <p className="text-[var(--text-main)] text-xs sm:text-sm font-sans">
-                    <strong className="text-emerald-400 font-mono">SOLUTION: </strong>
+                    <strong className="text-[var(--accent-quiet-text)] font-mono">SOLUTION: </strong>
                     {activeProject.solution}
                   </p>
                 </div>

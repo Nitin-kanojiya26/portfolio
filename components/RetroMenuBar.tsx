@@ -108,7 +108,7 @@ export default function RetroMenuBar() {
           <div className="px-2.5 py-1 border border-[var(--border-retro)] bg-[var(--surface-panel)] text-[var(--text-main)] font-mono text-xs flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="hidden sm:inline text-[var(--text-muted)] text-[10px]">VADODARA</span>
-            <strong className="font-bold text-emerald-600 dark:text-emerald-400">{currentTime}</strong>
+            <strong className="font-bold text-[var(--accent-quiet-text)]">{currentTime}</strong>
           </div>
 
           {/* Mobile Menu Dropdown Toggle */}

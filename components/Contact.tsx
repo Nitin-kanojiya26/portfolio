@@ -346,7 +346,7 @@ export default function Contact() {
 
                 <div className="p-2 border border-[var(--border-retro)] bg-[var(--surface-window)]">
                   <span className="text-[9px] text-[var(--text-muted)] block uppercase">PHONE</span>
-                  <a href="tel:+916355678578" className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">
+                  <a href="tel:+916355678578" className="font-bold text-[var(--accent-quiet-text)] hover:underline text-xs">
                     +91 6355 678 578
                   </a>
                 </div>
