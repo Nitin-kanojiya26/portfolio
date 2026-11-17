@@ -103,8 +103,8 @@ export default function CustomRetroCursor() {
       const cosY = Math.cos(rotY);
       const sinY = Math.sin(rotY);
 
-      // Compact, elegant cube size: 8.5px base, 12px on interactive hover
-      const targetSize = isHoveredRef.current ? 12 : 8.5;
+      // Sleek, compact micro-cube size: 5.5px base, 8px on interactive hover
+      const targetSize = isHoveredRef.current ? 8 : 5.5;
 
       // Draw 3 concentric collapsing wireframe layers for the inward tunnel effect
       const layerOffsets = [0, 0.33, 0.66];
@@ -139,7 +139,7 @@ export default function CustomRetroCursor() {
 
         // Draw crisp electric blue wireframe edges
         ctx.strokeStyle = `rgba(0, 122, 255, ${alpha})`;
-        ctx.lineWidth = l === 0 ? 1.2 : 0.8;
+        ctx.lineWidth = l === 0 ? 0.9 : 0.55;
         ctx.beginPath();
         for (let i = 0; i < edges.length; i++) {
           const [startIdx, endIdx] = edges[i];
@@ -151,8 +151,8 @@ export default function CustomRetroCursor() {
         ctx.stroke();
 
         // Connect collapsing layer to center reticle point (tunnel depth guide lines)
-        ctx.strokeStyle = `rgba(0, 122, 255, ${alpha * 0.3})`;
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = `rgba(0, 122, 255, ${alpha * 0.25})`;
+        ctx.lineWidth = 0.35;
         ctx.beginPath();
         for (let i = 0; i < 4; i++) {
           ctx.moveTo(projected[i].x, projected[i].y);
@@ -164,9 +164,9 @@ export default function CustomRetroCursor() {
       // Center reticle dot (crisp electric blue)
       ctx.fillStyle = '#0066ff';
       ctx.shadowColor = '#007aff';
-      ctx.shadowBlur = 6;
+      ctx.shadowBlur = 4;
       ctx.beginPath();
-      ctx.arc(currentX, currentY, 1.2, 0, Math.PI * 2);
+      ctx.arc(currentX, currentY, 0.9, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
 
