@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-[var(--accent-quiet)] font-bold">■</span>
-          <span className="tracking-wider">NITIN KANOJIYA • <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">BACKEND DEVELOPER | AI ENGINEERING</span></span>
+          <span className="tracking-wider">NITIN KANOJIYA • <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">BACKEND DEVELOPER | AI INTEGRATION</span></span>
         </div>
 
         {/* Center Copyright */}

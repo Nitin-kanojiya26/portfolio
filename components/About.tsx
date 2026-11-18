@@ -34,7 +34,7 @@ export default function About() {
           </div>
 
           <p className="text-xs sm:text-sm text-[var(--text-muted)] font-mono max-w-md">
-            <span className="font-bold text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)]">Backend Developer | AI Engineering</span> • Computer Engineering student at Dharmsinh Desai University.
+            <span className="font-bold text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)]">Backend Developer | AI Integration</span> • Computer Engineering student at Dharmsinh Desai University.
           </p>
         </div>
 

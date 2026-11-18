@@ -6,7 +6,7 @@ import RetroComputerCanvas from './RetroComputerCanvas';
 
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
-  const fullTagline = 'Backend Developer | AI Engineering';
+  const fullTagline = 'Backend Developer | AI Integration';
   const [displayedTagline, setDisplayedTagline] = useState(
     shouldReduceMotion ? fullTagline : ''
   );

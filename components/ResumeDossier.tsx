@@ -30,7 +30,7 @@ export default function ResumeDossier() {
               NITIN KANOJIYA
             </h2>
             <p className="text-xs sm:text-sm font-mono text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] mt-1 font-bold">
-              Backend Developer | AI Engineering
+              Backend Developer | AI Integration
             </p>
           </div>
 
@@ -184,14 +184,14 @@ export default function ResumeDossier() {
                 <span className="text-[10px] font-mono text-emerald-500 font-bold">FROM RESUME</span>
               </div>
 
-              <div className="space-y-4 text-xs font-mono">
+              <div className="space-y-3.5 text-xs font-mono">
                 {/* Languages */}
                 <div>
                   <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
                     LANGUAGES:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['Java', 'C', 'C++', 'HTML', 'CSS', 'Python', 'JavaScript', 'PHP'].map((s) => (
+                    {['Java', 'JavaScript', 'TypeScript', 'Python', 'C++', 'C', 'SQL', 'PHP', 'HTML', 'CSS'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
                         {s}
                       </span>
@@ -199,13 +199,13 @@ export default function ResumeDossier() {
                   </div>
                 </div>
 
-                {/* Frameworks */}
+                {/* Backend & APIs */}
                 <div className="border-t border-[var(--border-retro)] pt-3">
                   <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
-                    FRAMEWORKS:
+                    BACKEND &amp; APIS:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['Spring Boot', 'Node.js', 'Express.js', 'Django', 'REST APIs', 'JWT Authentication', 'WebSockets (Socket.IO)'].map((s) => (
+                    {['Spring Boot', 'Spring Security', 'Node.js', 'Express.js', 'Django', 'REST API Design', 'JWT Authentication', 'WebSockets (Socket.IO)', 'JPA/Hibernate'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
                         {s}
                       </span>
@@ -213,13 +213,13 @@ export default function ResumeDossier() {
                   </div>
                 </div>
 
-                {/* Databases */}
+                {/* Databases & Caching */}
                 <div className="border-t border-[var(--border-retro)] pt-3">
                   <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
-                    DATABASES:
+                    DATABASES &amp; CACHING:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['MySQL', 'PostgreSQL', 'MongoDB', 'Redis'].map((s) => (
+                    {['PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'pgvector'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
                         {s}
                       </span>
@@ -227,13 +227,13 @@ export default function ResumeDossier() {
                   </div>
                 </div>
 
-                {/* Tools */}
+                {/* Async Processing & Messaging */}
                 <div className="border-t border-[var(--border-retro)] pt-3">
                   <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
-                    TOOLS:
+                    ASYNC &amp; MESSAGING:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['Docker', 'Git', 'GitHub', 'Postman', 'BullMQ', 'Judge0'].map((s) => (
+                    {['BullMQ', 'Redis Queues', 'Background Workers', 'Idempotency & Retries'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
                         {s}
                       </span>
@@ -241,13 +241,41 @@ export default function ResumeDossier() {
                   </div>
                 </div>
 
-                {/* Concepts */}
+                {/* AI / LLM */}
                 <div className="border-t border-[var(--border-retro)] pt-3">
                   <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
-                    CONCEPTS:
+                    AI / LLM:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['REST API Design', 'JPA/Hibernate', 'OOP', 'JWT-based Authentication'].map((s) => (
+                    {['Google Gemini API', 'RAG', 'Vector Embeddings', 'Prompt Engineering'].map((s) => (
+                      <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* DevOps & Tools */}
+                <div className="border-t border-[var(--border-retro)] pt-3">
+                  <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
+                    DEVOPS &amp; TOOLS:
+                  </strong>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Docker', 'Git', 'GitHub', 'GitHub Apps (Probot)', 'Postman', 'Judge0', 'k6 (load testing)'].map((s) => (
+                      <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Frontend */}
+                <div className="border-t border-[var(--border-retro)] pt-3">
+                  <strong className="text-[var(--accent-color)] text-xs uppercase block mb-1.5 font-bold">
+                    FRONTEND:
+                  </strong>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['React.js', 'Vite', 'Tailwind CSS'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--text-main)] font-medium">
                         {s}
                       </span>
@@ -261,7 +289,7 @@ export default function ResumeDossier() {
                     CS FUNDAMENTALS:
                   </strong>
                   <div className="flex flex-wrap gap-1.5">
-                    {['Data Structures & Algorithms', 'DBMS'].map((s) => (
+                    {['Data Structures & Algorithms', 'OOP', 'DBMS'].map((s) => (
                       <span key={s} className="px-2 py-0.5 border border-[var(--border-retro)] bg-[var(--surface-window)] text-[var(--accent-quiet-text)] font-bold">
                         {s}
                       </span>
