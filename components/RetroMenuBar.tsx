@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from './ThemeProvider';
 import {
   Home,
@@ -85,7 +85,10 @@ function RetroIOSVerticalThemeSwitch({
   return (
     <button
       type="button"
-      onClick={toggleTheme}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleTheme();
+      }}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       className="group relative w-[26px] h-[48px] rounded-full p-[2px] bg-[var(--surface-window)]/90 dark:bg-black/60 border-2 border-[var(--border-retro)] hover:border-[var(--accent-quiet)] flex flex-col items-center justify-between cursor-pointer active:scale-95 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.7)]"
     >
@@ -130,6 +133,21 @@ function RetroIOSVerticalThemeSwitch({
 export default function RetroMenuBar() {
   const { theme, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState<string>('home');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+
+  // Track if on desktop (for phone it should only be the thin line)
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  // For phone it should ONLY be thin line (never expands into wide dock on phone)
+  const isExpanded = isOpen && isDesktop;
 
   // Active Section Scroll Spy
   useEffect(() => {
@@ -160,134 +178,185 @@ export default function RetroMenuBar() {
     { label: 'CONTACT', href: '#contact', id: 'contact', icon: Mail },
   ];
 
+  const activeLink = navLinks.find((l) => l.id === activeSection) || navLinks[0];
+  const ActiveIcon = activeLink.icon;
+
   return (
-    <>
-      {/* ─── DESKTOP: Left-Side Floating iOS × Retro Sidebar Dock ─── */}
-      <motion.aside
-        initial={{ x: -90, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        aria-label="Sidebar Navigation"
-        className="hidden md:flex fixed left-1 sm:left-2 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-1.5 py-2 sm:py-2.5 px-1 sm:px-1.5 rounded-full bg-[var(--surface-titlebar)]/90 dark:bg-[#111114]/90 backdrop-blur-2xl border-2 border-[var(--border-retro)] shadow-[4px_4px_0px_rgba(0,0,0,0.18)] dark:shadow-[4px_4px_0px_rgba(0,0,0,0.65),0_12px_40px_rgba(0,0,0,0.5)] select-none transition-all duration-300 w-auto"
+    <aside
+      aria-label="Dynamic Island Sidebar Navigation"
+      className="fixed left-1.5 sm:left-2.5 top-1/2 -translate-y-1/2 z-50 select-none"
+    >
+      <motion.div
+        layout
+        transition={{ type: 'spring', stiffness: 280, damping: 28, mass: 0.8 }}
+        onClick={() => {
+          if (isDesktop && !isExpanded) setIsOpen(true);
+        }}
+        className={`group relative flex flex-col items-center justify-between rounded-full bg-[var(--surface-titlebar)]/92 dark:bg-[#111114]/92 backdrop-blur-2xl border-2 border-[var(--border-retro)] shadow-[4px_4px_0px_rgba(0,0,0,0.18)] dark:shadow-[4px_4px_0px_rgba(0,0,0,0.65),0_12px_40px_rgba(0,0,0,0.5)] transition-colors will-change-transform ${
+          isExpanded
+            ? 'py-2 sm:py-2.5 px-1 sm:px-1.5 w-auto'
+            : 'py-2 px-0.5 w-3 sm:w-3.5 h-48 sm:h-56 cursor-pointer hover:border-[var(--accent-quiet)]'
+        }`}
       >
-        {/* Top Hardware Screws / LED Status Pips */}
-        <div className="flex items-center gap-1.5 opacity-60 mb-0.5">
-          <span className="w-1.5 h-1.5 rounded-full border border-[var(--border-retro)] bg-[var(--surface-window)]" />
-          <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="w-1.5 h-1.5 rounded-full border border-[var(--border-retro)] bg-[var(--surface-window)]" />
-        </div>
+        <AnimatePresence mode="wait">
+          {!isExpanded ? (
+            /* ─── SINGLE LOGO SECTION (DYNAMIC ISLAND THIN LINE) ─── */
+            <motion.div
+              key="single-logo-section"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center justify-between h-full w-full py-1 pointer-events-none gap-2"
+            >
+              {/* Dynamic Active Section Logo with Fluid Morph Animation */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection}
+                  initial={{ scale: 0.4, opacity: 0, y: -6 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.4, opacity: 0, y: 6 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 24 }}
+                  className="w-3.5 h-3.5 flex items-center justify-center text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] drop-shadow-[0_0_6px_var(--accent-quiet)]"
+                >
+                  <ActiveIcon className="w-3 h-3 stroke-[2.4]" />
+                </motion.div>
+              </AnimatePresence>
 
-        {/* Custom Retro-Designed 'N' Monogram Squircle */}
-        <a
-          href="#home"
-          title="Nitin · Home"
-          className="group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[var(--surface-window)]/90 dark:bg-white/5 border-2 border-[var(--border-retro)] hover:border-[var(--accent-quiet)] flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        >
-          <RetroNLogo />
+              {/* Ultra-Slim Phosphor Cyber Beam Line */}
+              <div className="w-[2px] flex-1 min-h-[90px] rounded-full bg-[var(--accent-quiet)] shadow-[0_0_8px_var(--accent-quiet)] shrink-0 transition-all duration-300" />
 
-          {/* iOS-Style Slide-Out Tooltip with Retro Pixel Typography */}
-          <span className="pointer-events-none absolute left-13 px-3 py-1.5 rounded-xl bg-[var(--surface-titlebar)]/95 dark:bg-[#18181c]/95 backdrop-blur-xl border-2 border-[var(--border-retro)] shadow-[3px_3px_0px_rgba(0,0,0,0.25)] text-[var(--text-main)] font-pixel text-xs tracking-wider whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center gap-1.5">
-            <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">&gt;</span>
-            <span>NITIN · HOME</span>
-          </span>
-        </a>
-
-        {/* Divider with Hardware Tick Marks */}
-        <div className="w-5 h-[2px] bg-[var(--border-retro)] opacity-50 my-0.5" />
-
-        {/* Vertical Navigation Icons with Spring Active Pill & Retro Tooltips */}
-        <nav className="flex flex-col items-center gap-1" aria-label="Main Navigation">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isCurrent = activeSection === link.id;
-
-            return (
-              <a
-                key={link.id}
-                href={link.href}
-                aria-label={link.label}
-                className={`group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 ${
-                  isCurrent
-                    ? 'text-[var(--accent-quiet-text)] dark:text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
-                }`}
+              {/* Bottom Theme Micro-Switcher (accessible on mobile & desktop) */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTheme();
+                }}
+                aria-label="Toggle theme"
+                className="w-3.5 h-3.5 flex items-center justify-center text-[var(--text-main)] pointer-events-auto active:scale-75 transition-transform cursor-pointer"
               >
-                {/* Active Spring Capsule Background */}
-                {isCurrent && (
-                  <motion.div
-                    layoutId="retro-ios-dock-active"
-                    className="absolute inset-0 rounded-xl sm:rounded-2xl bg-[var(--accent-quiet-bg)] dark:bg-[var(--accent-quiet-bg)]/40 border-2 border-[var(--accent-quiet)] shadow-sm"
-                    transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-                  />
+                {theme === 'dark' ? (
+                  <Sun className="w-2.5 h-2.5 text-amber-400" />
+                ) : (
+                  <Moon className="w-2.5 h-2.5 text-sky-400" />
                 )}
+              </button>
 
-                {/* Left Active Accent Pill Bar */}
-                {isCurrent && (
-                  <span className="absolute -left-1.5 w-1 h-4 rounded-r-full bg-[var(--accent-quiet)] shadow-[0_0_8px_var(--accent-quiet)]" />
-                )}
+              {/* Hover Tooltip (Slide-Out on Desktop) */}
+              {isDesktop && (
+                <span className="pointer-events-none absolute left-10 px-2.5 py-1.5 rounded-xl bg-[var(--surface-titlebar)]/95 dark:bg-[#18181c]/95 backdrop-blur-xl border-2 border-[var(--border-retro)] shadow-[3px_3px_0px_rgba(0,0,0,0.25)] text-[var(--text-main)] font-pixel text-xs tracking-wider whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center gap-1.5">
+                  <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">&gt;</span>
+                  <span>{activeLink.label}</span>
+                  <span className="text-[9px] opacity-60 font-sans">[OPEN]</span>
+                </span>
+              )}
+            </motion.div>
+          ) : (
+            /* ─── FULL EXPANDED DOCK: Opened on Click ─── */
+            <motion.div
+              key="expanded-dock"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center gap-1.5 w-auto"
+            >
+              {/* Top Close / Minimize Toggle Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                title="Collapse to single logo"
+                className="flex items-center gap-1.5 opacity-70 hover:opacity-100 mb-0.5 cursor-pointer active:scale-90 transition-transform"
+              >
+                <span className="w-1.5 h-1.5 rounded-full border border-[var(--border-retro)] bg-[var(--surface-window)]" />
+                <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full border border-[var(--border-retro)] bg-[var(--surface-window)]" />
+              </button>
 
-                <Icon className="relative z-10 w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              {/* Custom Retro-Designed 'N' Monogram Squircle */}
+              <a
+                href="#home"
+                title="Nitin · Home"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                className="group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[var(--surface-window)]/90 dark:bg-white/5 border-2 border-[var(--border-retro)] hover:border-[var(--accent-quiet)] flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <RetroNLogo />
 
-                {/* Floating Slide-Out Tooltip */}
+                {/* Tooltip */}
                 <span className="pointer-events-none absolute left-13 px-3 py-1.5 rounded-xl bg-[var(--surface-titlebar)]/95 dark:bg-[#18181c]/95 backdrop-blur-xl border-2 border-[var(--border-retro)] shadow-[3px_3px_0px_rgba(0,0,0,0.25)] text-[var(--text-main)] font-pixel text-xs tracking-wider whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center gap-1.5">
                   <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">&gt;</span>
-                  <span>{link.label}</span>
+                  <span>NITIN · HOME</span>
                 </span>
               </a>
-            );
-          })}
-        </nav>
 
-        {/* Divider */}
-        <div className="w-5 h-[2px] bg-[var(--border-retro)] opacity-50 my-0.5" />
+              {/* Divider with Hardware Tick Marks */}
+              <div className="w-5 h-[2px] bg-[var(--border-retro)] opacity-50 my-0.5" />
 
-        {/* Bottom Control: Vertical iOS Light/Dark Mode Switch */}
-        <div className="flex flex-col items-center pt-0.5">
-          <RetroIOSVerticalThemeSwitch theme={theme} toggleTheme={toggleTheme} />
-        </div>
-      </motion.aside>
+              {/* Vertical Navigation Icons */}
+              <nav className="flex flex-col items-center gap-1" aria-label="Main Navigation">
+                {navLinks.map((link) => {
+                  const Icon = link.icon;
+                  const isCurrent = activeSection === link.id;
 
-      {/* ─── MOBILE: Bottom Floating iOS × Retro Tab Bar ─── */}
-      <nav
-        aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-3 left-3 right-3 z-50 h-14 px-2 rounded-2xl bg-[var(--surface-titlebar)]/90 dark:bg-[#111114]/90 backdrop-blur-2xl border-2 border-[var(--border-retro)] shadow-[4px_4px_0px_rgba(0,0,0,0.25)] flex items-center justify-around select-none"
-      >
-        {navLinks.map((link) => {
-          const Icon = link.icon;
-          const isCurrent = activeSection === link.id;
-          return (
-            <a
-              key={link.id}
-              href={link.href}
-              aria-label={link.label}
-              className={`flex flex-col items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-90 ${
-                isCurrent
-                  ? 'bg-[var(--accent-quiet-bg)] dark:bg-[var(--accent-quiet-bg)]/40 text-[var(--accent-quiet-text)] dark:text-white border-2 border-[var(--accent-quiet)] shadow-sm'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="text-[9px] font-pixel mt-0.5 tracking-tight">
-                {link.label}
-              </span>
-            </a>
-          );
-        })}
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.href}
+                      aria-label={link.label}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(false);
+                      }}
+                      className={`group relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 ${
+                        isCurrent
+                          ? 'text-[var(--accent-quiet-text)] dark:text-white'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
+                      }`}
+                    >
+                      {/* Active Spring Capsule Background */}
+                      {isCurrent && (
+                        <motion.div
+                          layoutId="retro-ios-dock-active"
+                          className="absolute inset-0 rounded-xl sm:rounded-2xl bg-[var(--accent-quiet-bg)] dark:bg-[var(--accent-quiet-bg)]/40 border-2 border-[var(--accent-quiet)] shadow-sm"
+                          transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                        />
+                      )}
 
-        {/* Mobile Theme Switch Button */}
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label="Toggle theme"
-          className="flex flex-col items-center justify-center w-9 h-9 rounded-xl bg-[var(--surface-window)]/80 dark:bg-white/5 border border-[var(--border-retro)] text-[var(--text-main)] active:scale-90 transition-all cursor-pointer"
-        >
-          {theme === 'dark' ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-sky-500" />
+                      {/* Left Active Accent Pill Bar */}
+                      {isCurrent && (
+                        <span className="absolute -left-1.5 w-1 h-4 rounded-r-full bg-[var(--accent-quiet)] shadow-[0_0_8px_var(--accent-quiet)]" />
+                      )}
+
+                      <Icon className="relative z-10 w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+
+                      {/* Floating Slide-Out Tooltip */}
+                      <span className="pointer-events-none absolute left-13 px-3 py-1.5 rounded-xl bg-[var(--surface-titlebar)]/95 dark:bg-[#18181c]/95 backdrop-blur-xl border-2 border-[var(--border-retro)] shadow-[3px_3px_0px_rgba(0,0,0,0.25)] text-[var(--text-main)] font-pixel text-xs tracking-wider whitespace-nowrap opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center gap-1.5">
+                        <span className="text-[var(--accent-quiet-text)] dark:text-[var(--accent-quiet)] font-bold">&gt;</span>
+                        <span>{link.label}</span>
+                      </span>
+                    </a>
+                  );
+                })}
+              </nav>
+
+              {/* Divider */}
+              <div className="w-5 h-[2px] bg-[var(--border-retro)] opacity-50 my-0.5" />
+
+              {/* Bottom Control: Vertical iOS Light/Dark Mode Switch */}
+              <div className="flex flex-col items-center pt-0.5">
+                <RetroIOSVerticalThemeSwitch theme={theme} toggleTheme={toggleTheme} />
+              </div>
+            </motion.div>
           )}
-        </button>
-      </nav>
-    </>
+        </AnimatePresence>
+      </motion.div>
+    </aside>
   );
 }
