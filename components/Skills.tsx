@@ -111,7 +111,7 @@ export default function Skills() {
       <RetroWindow
         title="04_SYS_CAPABILITIES.CFG"
         badge="TECH_STACK"
-        statusText={`ACTIVE RACK: ${currentCategory.code} • READY`}
+        statusText={`ACTIVE RACK: ${currentCategory.code} • ACTIVE`}
         pathText="DIR: /HARDWARE/DRIVERS/SYS_CAPABILITIES.CFG"
       >
         <div className="flex flex-col gap-5">

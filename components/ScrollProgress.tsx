@@ -14,7 +14,7 @@ export default function ScrollProgress() {
   }, [scrollYProgress]);
 
   return (
-    <div className="fixed top-10 left-0 right-0 z-40 pointer-events-none select-none">
+    <div className="fixed top-0 left-0 right-0 z-40 pointer-events-none select-none">
       {/* 2px Slim Phosphor Progress Bar */}
       <div className="w-full h-[2px] bg-[var(--border-subtle)]">
         <motion.div

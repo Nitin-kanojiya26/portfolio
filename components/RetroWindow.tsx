@@ -20,7 +20,7 @@ export default function RetroWindow({
   children,
   className = '',
   badge = 'ACTIVE',
-  statusText = 'STATUS: 200 • READY',
+  statusText = 'STATUS: 200',
   pathText,
   collapsible = true,
 }: RetroWindowProps) {

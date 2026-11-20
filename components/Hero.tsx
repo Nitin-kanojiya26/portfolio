@@ -60,15 +60,12 @@ export default function Hero() {
               +
             </span>
             <span className="font-bold tracking-wider text-[var(--text-main)] ml-1">
-              NITIN WORKSTATION • 1984
+              NITIN KANOJIYA
             </span>
           </div>
 
-          <div className="flex items-center gap-3 font-mono text-[11px]">
-            <div className="flex items-center gap-1.5 text-emerald-500">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>ONLINE • READY</span>
-            </div>
+          <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-500">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
         </header>
 
@@ -186,8 +183,6 @@ export default function Hero() {
         {/* Workstation Screen Bottom Status Bar */}
         <footer className="border-t border-[var(--border-retro)] bg-[var(--surface-titlebar)] px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between text-[10px] font-mono text-[var(--text-muted)]">
           <span>HOST: NITIN KANOJIYA • B.TECH COMPUTER ENGINEERING</span>
-          <span className="hidden sm:inline">INTERACTION: DRAG TO ROTATE 3D WIREFRAME</span>
-          <span className="text-emerald-400 font-bold">WORKSTATION: ONLINE</span>
         </footer>
 
       </motion.div>

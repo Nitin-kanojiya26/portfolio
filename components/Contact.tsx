@@ -130,7 +130,7 @@ export default function Contact() {
       <RetroWindow
         title="05_CONTACT_AND_RADAR.EXE"
         badge="ONLINE • PORT 8080"
-        statusText="COMM CHANNEL: READY • RADAR TRACKING"
+        statusText="COMM CHANNEL: ONLINE • RADAR TRACKING"
         pathText="DIR: /COMMUNICATION/SEND_MESSAGE.TS"
       >
         {/* Section Header */}
@@ -170,7 +170,7 @@ export default function Contact() {
 
                 <div className="flex items-center gap-2 text-[10px] text-[#A5A9AE]">
                   <span>TypeScript</span>
-                  <span className="text-emerald-400 font-bold">● READY</span>
+                  <span className="text-emerald-400 font-bold">● ONLINE</span>
                 </div>
               </div>
 
