@@ -5,6 +5,8 @@ import Image from 'next/image';
 import RetroWindow from './RetroWindow';
 import { GraduationCap, Award, Code2, Server, CheckCircle2 } from 'lucide-react';
 import { getAcademicProgress } from '@/lib/academicProgress';
+import EngineeringPathVisual from './EngineeringPathVisual';
+import CalmPageBackground from './CalmPageBackground';
 
 export default function About() {
   const academic = getAcademicProgress();
@@ -19,6 +21,9 @@ export default function About() {
         statusText="STUDENT PROFILE • DHARMSINH DESAI UNIVERSITY"
         pathText="DIR: /NITIN_KANOJIYA/ABOUT.TXT"
       >
+        {/* Calm & Professional In-Page Animated Background */}
+        <CalmPageBackground variant="about" />
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-6 pb-4 border-b-2 border-[var(--border-retro)]">
           <div>
@@ -150,6 +155,9 @@ export default function About() {
           </div>
 
         </div>
+
+        {/* Engineering Trajectory Pipeline */}
+        <EngineeringPathVisual />
       </RetroWindow>
     </section>
   );

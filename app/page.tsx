@@ -1,4 +1,4 @@
-import RetroMenuBar from '@/components/RetroMenuBar';
+import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import ResumeDossier from '@/components/ResumeDossier';
@@ -20,7 +20,7 @@ export default function Home() {
       </a>
 
       <LayoutWrapper>
-        <RetroMenuBar />
+        <Navbar />
         <Hero />
         <div id="main-content">
           <About />

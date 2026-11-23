@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import RetroWindow from './RetroWindow';
 import RetroRadar from './RetroRadar';
+import CalmPageBackground from './CalmPageBackground';
 import { Mail, Copy, Check, ExternalLink, Play, Terminal, Phone, Send } from 'lucide-react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { SiLeetcode, SiCodeforces } from 'react-icons/si';
@@ -133,6 +134,9 @@ export default function Contact() {
         statusText="COMM CHANNEL: ONLINE • RADAR TRACKING"
         pathText="DIR: /COMMUNICATION/SEND_MESSAGE.TS"
       >
+        {/* Calm & Professional In-Page Animated Background */}
+        <CalmPageBackground variant="contact" />
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-5 pb-3 border-b-2 border-[var(--border-retro)]">
           <div>

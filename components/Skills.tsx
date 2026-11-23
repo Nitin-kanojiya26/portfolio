@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import RetroWindow from './RetroWindow';
+import CalmPageBackground from './CalmPageBackground';
 import { SiClaude, SiDeepseek, SiGooglegemini, SiOllama, SiRedis, SiPostgresql, SiMongodb, SiMysql, SiDocker, SiSocketdotio } from 'react-icons/si';
 import { RiOpenaiFill } from 'react-icons/ri';
 import { Terminal, Cpu, Database, Wrench, Sparkles, Layers } from 'lucide-react';
@@ -114,6 +115,9 @@ export default function Skills() {
         statusText={`ACTIVE RACK: ${currentCategory.code} • ACTIVE`}
         pathText="DIR: /HARDWARE/DRIVERS/SYS_CAPABILITIES.CFG"
       >
+        {/* Calm & Professional In-Page Animated Background */}
+        <CalmPageBackground variant="default" />
+
         <div className="flex flex-col gap-5">
           <div>
             <div className="flex items-center gap-2 mb-1">

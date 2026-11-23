@@ -39,7 +39,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full flex flex-col justify-center items-center pt-2 sm:pt-4 pb-2 sm:pb-3 px-2 sm:px-4 md:px-8 bg-[var(--bg-canvas)] overflow-hidden"
+      className="relative w-full flex flex-col justify-center items-center pt-2 sm:pt-4 pb-2 sm:pb-3 px-2 sm:px-4 md:px-8 bg-transparent overflow-hidden"
     >
       {/* Edge-to-Edge Retro CRT Workstation Bezel (Covers Full Screen) */}
       <motion.div
@@ -73,7 +73,9 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 p-4 sm:p-6 md:p-8 items-center">
           
           {/* Left Column: Big Interactive 3D Animated Retro Computer */}
-          <div className="lg:col-span-6 w-full flex flex-col items-center justify-center order-1 lg:order-2">
+          <div className="lg:col-span-6 w-full flex flex-col items-center justify-center order-1 lg:order-2 relative">
+            {/* Calm Native Ambient Aura behind monitor */}
+            <div className="absolute inset-2 -z-10 rounded-2xl bg-[var(--accent-quiet)]/12 blur-2xl pointer-events-none" />
             <div className="w-full aspect-square max-w-[310px] sm:max-w-[420px] lg:max-w-[480px] border-2 border-[var(--border-retro)] bg-black p-1.5 sm:p-2 relative shadow-[inset_0_0_25px_rgba(0,0,0,0.85)]">
               {/* Scanline overlay for the monitor */}
               <div className="absolute inset-0 dither-pattern opacity-25 pointer-events-none" />
@@ -93,7 +95,7 @@ export default function Hero() {
           <div className="lg:col-span-6 flex flex-col items-start gap-3 sm:gap-4 order-2 lg:order-1">
             
             {/* Huge Name Heading */}
-            <div className="flex flex-col gap-1 w-full">
+            <div className="flex flex-col gap-1.5 w-full">
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-pixel font-bold tracking-tight text-[var(--text-main)] leading-none break-words">
                 NITIN KANOJIYA
               </h1>
