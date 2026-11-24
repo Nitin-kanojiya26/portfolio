@@ -153,54 +153,54 @@ function MinimalMailIcon({ size = 13, className = '', style }: IconProps) {
 }
 
 /* ═══════════════════════════════════════════════════════════
- *  NEW BESPOKE LIGHT & DARK MODE ICONS (CELESTIAL ECLIPSE ORB)
+ *  HANDCRAFTED HARDWARE THEME ICONS (TACTILE SUN & MOON)
  * ═══════════════════════════════════════════════════════════ */
 
-// New Light Mode Icon: Precision Radiant Solar Core with Cardinal Beams & Orbital Pips
-function NewLightModeIcon({ size = 12, className = '' }: IconProps) {
+// Precision Solar Core with 8 Cardinal & Diagonal Beams
+function MicroSunIcon({ size = 10, className = '' }: IconProps) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      viewBox="0 0 14 14"
       width={size}
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.4"
+      strokeWidth="1.3"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
       aria-hidden="true"
     >
-      <circle cx="8" cy="8" r="2.8" />
-      <line x1="8" y1="1.4" x2="8" y2="3.2" />
-      <line x1="8" y1="12.8" x2="8" y2="14.6" />
-      <line x1="1.4" y1="8" x2="3.2" y2="8" />
-      <line x1="12.8" y1="8" x2="14.6" y2="8" />
-      <circle cx="3.4" cy="3.4" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="12.6" cy="3.4" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="3.4" cy="12.6" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="12.6" cy="12.6" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="7" cy="7" r="2.4" />
+      <line x1="7" y1="1" x2="7" y2="2.5" />
+      <line x1="7" y1="11.5" x2="7" y2="13" />
+      <line x1="1" y1="7" x2="2.5" y2="7" />
+      <line x1="11.5" y1="7" x2="13" y2="7" />
+      <line x1="2.75" y1="2.75" x2="3.8" y2="3.8" />
+      <line x1="10.2" y1="10.2" x2="11.25" y2="11.25" />
+      <line x1="2.75" y1="11.25" x2="3.8" y2="10.2" />
+      <line x1="10.2" y1="3.8" x2="11.25" y2="2.75" />
     </svg>
   );
 }
 
-// New Dark Mode Icon: Sharp Precision Lunar Eclipse Curve with Starlight Beacon
-function NewDarkModeIcon({ size = 12, className = '' }: IconProps) {
+// Precision Lunar Eclipse Crescent with Orbital Starlight Pip
+function MicroMoonIcon({ size = 10, className = '' }: IconProps) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      viewBox="0 0 14 14"
       width={size}
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.4"
+      strokeWidth="1.3"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
       aria-hidden="true"
     >
-      <path d="M12.8 8.6C12.1 11.5 9.4 13.5 6.4 13.2C3.4 12.9 1 10.4 1 7.4C1 4.4 3 2 5.9 1.4C5.3 2.7 5.4 4.1 6.1 5.3C7 6.9 8.7 7.9 10.6 7.9C11.4 7.9 12.2 7.7 12.8 7.2V8.6Z" />
-      <circle cx="12.6" cy="3.2" r="1.1" fill="currentColor" stroke="none" />
+      <path d="M11 7.2C10.3 9.6 8 11.2 5.5 11C3 10.7 1.2 8.7 1.2 6.2C1.2 3.8 2.8 1.8 5.1 1.4C4.6 2.4 4.7 3.5 5.3 4.4C6.1 5.7 7.5 6.5 9 6.5C9.7 6.5 10.4 6.3 11 6V7.2Z" />
+      <circle cx="10.8" cy="2.5" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }
@@ -542,18 +542,18 @@ export default function Navbar() {
 
   // Dimensions
   const SIDE_W = 36;
-  const SIDE_H = 250;
+  const SIDE_H = 254;
   const SIDE_SHOULDER = 38;
-  const SIDE_START_Y = 44;
-  const SIDE_GAP = 25;
-  const SIDE_THEME_Y = 196;
+  const SIDE_START_Y = 42;
+  const SIDE_GAP = 23;
+  const SIDE_THEME_Y = 198;
 
-  const TOP_W = 250;
+  const TOP_W = 260;
   const TOP_H = 32;
   const TOP_SHOULDER = 38;
-  const TOP_START_X = 46;
-  const TOP_GAP = 24;
-  const TOP_THEME_X = 192;
+  const TOP_START_X = 42;
+  const TOP_GAP = 23;
+  const TOP_THEME_X = 204;
 
   // Initialize dock position: Phone default -> 'right', PC default -> 'left'
   useEffect(() => {
@@ -933,18 +933,24 @@ export default function Navbar() {
                   );
                 })}
 
-                {/* ─── New Theme Toggle Button (Celestial Orbit / Eclipse) ─── */}
+                {/* ─── iPhone-Style Matte Black Glassmorphic Pill Toggle ─── */}
                 {(() => {
                   let themeStyle: React.CSSProperties = {};
                   if (isHorizontal) {
                     themeStyle = {
-                      left: `${TOP_THEME_X - 9}px`,
+                      left: `${TOP_THEME_X - 15}px`,
                       top: '7px',
                     };
                   } else if (dock === 'left') {
-                    themeStyle = { top: `${SIDE_THEME_Y - 10}px`, left: '8px' };
+                    themeStyle = {
+                      top: `${SIDE_THEME_Y - 9}px`,
+                      left: '3px',
+                    };
                   } else {
-                    themeStyle = { top: `${SIDE_THEME_Y - 10}px`, right: '8px' };
+                    themeStyle = {
+                      top: `${SIDE_THEME_Y - 9}px`,
+                      right: '3px',
+                    };
                   }
 
                   return (
@@ -956,18 +962,28 @@ export default function Navbar() {
                         e.stopPropagation();
                         toggleTheme();
                       }}
-                      aria-label="Toggle theme"
+                      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                       style={themeStyle}
-                      className={`absolute ${
-                        isHorizontal ? 'w-[18px] h-[18px]' : 'w-[20px] h-[20px]'
-                      } rounded-full flex items-center justify-center bg-white/8 hover:bg-white/20 border border-white/20 active:scale-95 transition-all cursor-pointer z-20`}
-                      title="Toggle Dark/Light Mode"
+                      className="absolute w-[30px] h-[18px] rounded-full bg-[#111215]/95 hover:border-white/28 backdrop-blur-md border border-white/15 shadow-[inset_0_1px_2px_rgba(0,0,0,0.75)] active:scale-95 transition-colors cursor-pointer z-20"
+                      title={`Theme: ${theme.toUpperCase()} (Click to toggle)`}
                     >
-                      {theme === 'dark' ? (
-                        <NewDarkModeIcon size={isHorizontal ? 11 : 12} className="text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.85)]" />
-                      ) : (
-                        <NewLightModeIcon size={isHorizontal ? 11 : 12} className="text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.85)]" />
-                      )}
+                      <motion.div
+                        className="absolute top-[1px] w-[14px] h-[14px] rounded-full flex items-center justify-center bg-[#26282f] border border-white/20 shadow-[0_1px_2px_rgba(0,0,0,0.6)] pointer-events-none"
+                        animate={{ left: theme === 'dark' ? '13px' : '1px' }}
+                        transition={{ type: 'spring', stiffness: 520, damping: 32 }}
+                      >
+                        {theme === 'dark' ? (
+                          <MicroMoonIcon
+                            size={8.5}
+                            className="text-[#D4D8DF]"
+                          />
+                        ) : (
+                          <MicroSunIcon
+                            size={8.5}
+                            className="text-[#E6D5A9]"
+                          />
+                        )}
+                      </motion.div>
                     </button>
                   );
                 })()}
