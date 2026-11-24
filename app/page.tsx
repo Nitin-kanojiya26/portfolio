@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import About from '@/components/About';
 import ResumeDossier from '@/components/ResumeDossier';
 import Projects from '@/components/Projects';
+import EngineeringPathVisual from '@/components/EngineeringPathVisual';
 import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
@@ -26,6 +27,7 @@ export default function Home() {
           <About />
           <ResumeDossier />
           <Projects />
+          <EngineeringPathVisual />
           <Skills />
           <Contact />
         </div>

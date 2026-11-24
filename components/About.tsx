@@ -5,7 +5,6 @@ import Image from 'next/image';
 import RetroWindow from './RetroWindow';
 import { GraduationCap, Award, Code2, Server, CheckCircle2 } from 'lucide-react';
 import { getAcademicProgress } from '@/lib/academicProgress';
-import EngineeringPathVisual from './EngineeringPathVisual';
 import CalmPageBackground from './CalmPageBackground';
 
 export default function About() {
@@ -155,9 +154,6 @@ export default function About() {
           </div>
 
         </div>
-
-        {/* Engineering Trajectory Pipeline */}
-        <EngineeringPathVisual />
       </RetroWindow>
     </section>
   );
